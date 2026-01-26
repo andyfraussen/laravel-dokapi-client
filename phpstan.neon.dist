@@ -1,0 +1,16 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+
+    paths:
+        - src/
+
+    # Level 8 is a great balance for packages
+    level: 8
+
+    ignoreErrors:
+        - '#has parameter \$[a-zA-Z0-9_]+ with no value type specified in iterable type array#'
+        - '#return type has no value type specified in iterable type array#'
+        - '#type has no value type specified in iterable type array#'
+        - '#PHPDoc tag @method for method .* no value type specified in iterable type array#'

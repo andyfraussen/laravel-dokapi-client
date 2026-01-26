@@ -1,0 +1,49 @@
+{
+    "name": "andyfraussen/laravel-dokapi-client",
+    "description": "A comprehensive, fluent Laravel client for the Dokapi Peppol API with full DTO support and OAuth2 integration",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andy Fraussen",
+            "homepage": "https://github.com/andyfraussen"
+        }
+    ],
+    "require": {
+        "php": "^8.3|^8.4|^8.5",
+        "illuminate/support": "^11.0|^12.0",
+        "illuminate/cache": "^11.0|^12.0",
+        "guzzlehttp/guzzle": "^7.5"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.0|^10.0",
+        "phpunit/phpunit": "^10.0|^11.0",
+        "larastan/larastan": "^3.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "AndyFraussen\\Dokapi\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "AndyFraussen\\Dokapi\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "phpstan": "vendor/bin/phpstan analyse --memory-limit=1G"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AndyFraussen\\Dokapi\\DokapiServiceProvider"
+            ],
+            "aliases": {
+                "Dokapi": "AndyFraussen\\Dokapi\\Facades\\Dokapi"
+            }
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
