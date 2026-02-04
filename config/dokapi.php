@@ -16,7 +16,18 @@ return [
     'client_secret' => env('DOKAPI_CLIENT_SECRET'),
     'access_token' => env('DOKAPI_ACCESS_TOKEN'),
     'cache_token' => env('DOKAPI_CACHE_TOKEN', true),
-    'timeout' => 30,
-    'connect_timeout' => 10,
-    'verify' => true,
+    'timeout' => env('DOKAPI_TIMEOUT', 30),
+    'connect_timeout' => env('DOKAPI_CONNECT_TIMEOUT', 10),
+    'verify' => env('DOKAPI_VERIFY', true),
+    'user_agent' => env('DOKAPI_USER_AGENT', 'andyfraussen/laravel-dokapi-client'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | HTTP Client Options
+    |--------------------------------------------------------------------------
+    |
+    | Extra Guzzle options or headers to merge into each request.
+    |
+    */
+    'http' => [],
 ];

@@ -4,6 +4,7 @@ namespace AndyFraussen\Dokapi;
 
 use AndyFraussen\Dokapi\Clients\DokapiClient;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Contracts\Cache\Factory as CacheFactory;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 
 class DokapiServiceProvider extends ServiceProvider
@@ -28,7 +29,13 @@ class DokapiServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/../config/dokapi.php', 'dokapi');
 
         $this->app->singleton(DokapiClient::class, function ($app) {
-            $cache = $app->bound(CacheRepository::class) ? $app->make(CacheRepository::class) : null;
+            $cache = null;
+            if ($app->bound(CacheFactory::class)) {
+                $cache = $app->make(CacheFactory::class)->store();
+            } elseif ($app->bound(CacheRepository::class)) {
+                $cache = $app->make(CacheRepository::class);
+            }
+
             return new DokapiClient($app['config']['dokapi'] ?? [], null, $cache);
         });
     }

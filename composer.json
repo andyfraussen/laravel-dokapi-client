@@ -11,6 +11,7 @@
     ],
     "require": {
         "php": "^8.3|^8.4|^8.5",
+        "ext-json": "*",
         "illuminate/support": "^11.0|^12.0",
         "illuminate/cache": "^11.0|^12.0",
         "guzzlehttp/guzzle": "^7.5"

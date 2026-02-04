@@ -9,7 +9,7 @@ final class CreateParticipantRegistrationResponse
     public readonly string $businessCardMessage;
     public readonly bool $businessCardSuccessful;
     public readonly ParticipantRegistration $participantRegistration;
-    public readonly ?string $message;
+    public readonly string $message;
 
     private function __construct(
         string $participantRegistrationMessage,
@@ -17,7 +17,7 @@ final class CreateParticipantRegistrationResponse
         string $businessCardMessage,
         bool $businessCardSuccessful,
         ParticipantRegistration $participantRegistration,
-        ?string $message
+        string $message
     ) {
         $this->participantRegistrationMessage = $participantRegistrationMessage;
         $this->participantRegistrationSuccessful = $participantRegistrationSuccessful;
@@ -35,7 +35,7 @@ final class CreateParticipantRegistrationResponse
             (string) ($data['businessCardMessage'] ?? ''),
             (bool) ($data['businessCardSuccessful'] ?? false),
             ParticipantRegistration::fromArray((array) ($data['participantRegistration'] ?? [])),
-            isset($data['message']) ? (string) $data['message'] : null
+            (string) ($data['message'] ?? '')
         );
     }
 }

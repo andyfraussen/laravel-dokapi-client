@@ -5,6 +5,7 @@ namespace AndyFraussen\Dokapi\Api\Resources;
 use AndyFraussen\Dokapi\Dto\CreateParticipantRegistrationResponse;
 use AndyFraussen\Dokapi\Dto\ParticipantRegistration;
 use AndyFraussen\Dokapi\Dto\ParticipantRegistrationPage;
+use AndyFraussen\Dokapi\Dto\ProblemDetail;
 use AndyFraussen\Dokapi\Dto\RegisterDocumentTypeResponse;
 use AndyFraussen\Dokapi\Dto\ServiceGroupAndBusinessCard;
 use AndyFraussen\Dokapi\Dto\TextResponse;
@@ -47,7 +48,7 @@ class ParticipantsResource extends BaseResource
         return $this->client->registerParticipant($this->payloadToArray($payload));
     }
 
-    public function registerDto(array|PayloadInterface $payload): CreateParticipantRegistrationResponse
+    public function registerDto(array|PayloadInterface $payload): CreateParticipantRegistrationResponse|ProblemDetail
     {
         return $this->client->registerParticipantDto($this->payloadToArray($payload));
     }

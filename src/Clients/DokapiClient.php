@@ -11,6 +11,7 @@ use AndyFraussen\Dokapi\Dto\DeleteWebhookResponse;
 use AndyFraussen\Dokapi\Dto\OutgoingDocumentResponse;
 use AndyFraussen\Dokapi\Dto\ParticipantRegistration;
 use AndyFraussen\Dokapi\Dto\ParticipantRegistrationPage;
+use AndyFraussen\Dokapi\Dto\ProblemDetail;
 use AndyFraussen\Dokapi\Dto\RegisterDocumentTypeResponse;
 use AndyFraussen\Dokapi\Dto\ServiceGroupAndBusinessCard;
 use AndyFraussen\Dokapi\Dto\TextResponse;
@@ -24,6 +25,7 @@ use AndyFraussen\Dokapi\Exceptions\DokapiRateLimitException;
 use AndyFraussen\Dokapi\Exceptions\DokapiRequestException;
 use AndyFraussen\Dokapi\Exceptions\DokapiServerException;
 use AndyFraussen\Dokapi\Exceptions\DokapiValidationException;
+use AndyFraussen\Dokapi\Requests\PayloadInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
@@ -55,6 +57,11 @@ class DokapiClient
         return $this->api;
     }
 
+    protected function payloadToArray(array|PayloadInterface $payload): array
+    {
+        return $payload instanceof PayloadInterface ? $payload->toArray() : $payload;
+    }
+
     public function getStatus(): string
     {
         return $this->requestText('GET', '/status', [], false);
@@ -65,12 +72,12 @@ class DokapiClient
         return TextResponse::fromString($this->getStatus());
     }
 
-    public function createWebhook(array $payload): array
+    public function createWebhook(array|PayloadInterface $payload): array
     {
-        return $this->requestJson('POST', '/webhooks', ['json' => $payload]);
+        return $this->requestJson('POST', '/webhooks', ['json' => $this->payloadToArray($payload)]);
     }
 
-    public function createWebhookDto(array $payload): CreateWebhookResponse
+    public function createWebhookDto(array|PayloadInterface $payload): CreateWebhookResponse
     {
         return CreateWebhookResponse::fromArray($this->createWebhook($payload));
     }
@@ -138,7 +145,7 @@ class DokapiClient
      * @return array The create response payload
      * @throws DokapiException
      */
-    public function sendOutgoingDocument(array $metadata, string $xmlContent): array
+    public function sendOutgoingDocument(array|PayloadInterface $metadata, string $xmlContent): array
     {
         $response = $this->createOutgoingDocument($metadata);
         $uploadUrl = $response['preSignedUploadUrl'] ?? null;
@@ -152,7 +159,7 @@ class DokapiClient
         return $response;
     }
 
-    public function send(array $payload, string $xmlContent): array
+    public function send(array|PayloadInterface $payload, string $xmlContent): array
     {
         return $this->sendOutgoingDocument($payload, $xmlContent);
     }
@@ -160,9 +167,9 @@ class DokapiClient
     /**
      * Create an outgoing document to obtain a pre-signed upload URL.
      */
-    public function createOutgoingDocument(array $metadata): array
+    public function createOutgoingDocument(array|PayloadInterface $metadata): array
     {
-        return $this->requestJson('POST', '/outgoing-peppol-documents', ['json' => $metadata]);
+        return $this->requestJson('POST', '/outgoing-peppol-documents', ['json' => $this->payloadToArray($metadata)]);
     }
 
     /**
@@ -178,12 +185,12 @@ class DokapiClient
         ], false);
     }
 
-    public function createValidatingDocument(array $payload = []): array
+    public function createValidatingDocument(array|PayloadInterface $payload = []): array
     {
-        return $this->requestJson('POST', '/validating-peppol-documents', ['json' => $payload]);
+        return $this->requestJson('POST', '/validating-peppol-documents', ['json' => $this->payloadToArray($payload)]);
     }
 
-    public function sendValidatingDocument(string $xmlContent, array $payload = []): array
+    public function sendValidatingDocument(string $xmlContent, array|PayloadInterface $payload = []): array
     {
         $response = $this->createValidatingDocument($payload);
         $uploadUrl = $response['preSignedUploadUrl'] ?? null;
@@ -197,28 +204,28 @@ class DokapiClient
         return $response;
     }
 
-    public function createOutgoingDocumentDto(array $metadata): OutgoingDocumentResponse
+    public function createOutgoingDocumentDto(array|PayloadInterface $metadata): OutgoingDocumentResponse
     {
         return OutgoingDocumentResponse::fromArray(
             $this->createOutgoingDocument($metadata)
         );
     }
 
-    public function sendOutgoingDocumentDto(array $metadata, string $xmlContent): OutgoingDocumentResponse
+    public function sendOutgoingDocumentDto(array|PayloadInterface $metadata, string $xmlContent): OutgoingDocumentResponse
     {
         return OutgoingDocumentResponse::fromArray(
             $this->sendOutgoingDocument($metadata, $xmlContent)
         );
     }
 
-    public function createValidatingDocumentDto(array $payload = []): ValidatingDocumentResponse
+    public function createValidatingDocumentDto(array|PayloadInterface $payload = []): ValidatingDocumentResponse
     {
         return ValidatingDocumentResponse::fromArray(
             $this->createValidatingDocument($payload)
         );
     }
 
-    public function sendValidatingDocumentDto(string $xmlContent, array $payload = []): ValidatingDocumentResponse
+    public function sendValidatingDocumentDto(string $xmlContent, array|PayloadInterface $payload = []): ValidatingDocumentResponse
     {
         return ValidatingDocumentResponse::fromArray(
             $this->sendValidatingDocument($xmlContent, $payload)
@@ -242,32 +249,37 @@ class DokapiClient
         );
     }
 
-    public function registerParticipantDto(array $payload): CreateParticipantRegistrationResponse
+    public function registerParticipantDto(array|PayloadInterface $payload): CreateParticipantRegistrationResponse|ProblemDetail
     {
-        return CreateParticipantRegistrationResponse::fromArray($this->registerParticipant($payload));
+        $response = $this->registerParticipant($payload);
+        if (ProblemDetail::isProblemDetail($response)) {
+            return ProblemDetail::fromArray($response);
+        }
+
+        return CreateParticipantRegistrationResponse::fromArray($response);
     }
 
-    public function deregisterParticipantDto(array $payload): TextResponse
+    public function deregisterParticipantDto(array|PayloadInterface $payload): TextResponse
     {
         return TextResponse::fromString($this->deregisterParticipant($payload));
     }
 
-    public function updateBusinessCardDto(array $payload): TextResponse
+    public function updateBusinessCardDto(array|PayloadInterface $payload): TextResponse
     {
         return TextResponse::fromString($this->updateBusinessCard($payload));
     }
 
-    public function pushBusinessCardDto(array $payload): TextResponse
+    public function pushBusinessCardDto(array|PayloadInterface $payload): TextResponse
     {
         return TextResponse::fromString($this->pushBusinessCard($payload));
     }
 
-    public function registerDocumentTypeDto(array $payload): RegisterDocumentTypeResponse
+    public function registerDocumentTypeDto(array|PayloadInterface $payload): RegisterDocumentTypeResponse
     {
         return RegisterDocumentTypeResponse::fromArray($this->registerDocumentType($payload));
     }
 
-    public function deregisterDocumentTypeDto(array $payload): TextResponse
+    public function deregisterDocumentTypeDto(array|PayloadInterface $payload): TextResponse
     {
         return TextResponse::fromString($this->deregisterDocumentType($payload));
     }
@@ -315,34 +327,34 @@ class DokapiClient
         return $this->requestJson('GET', '/participant-registrations', ['query' => $query]);
     }
 
-    public function registerParticipant(array $payload): array
+    public function registerParticipant(array|PayloadInterface $payload): array
     {
-        return $this->requestJson('POST', '/participant-registrations', ['json' => $payload]);
+        return $this->requestJson('POST', '/participant-registrations', ['json' => $this->payloadToArray($payload)]);
     }
 
-    public function deregisterParticipant(array $payload): string
+    public function deregisterParticipant(array|PayloadInterface $payload): string
     {
-        return $this->requestText('DELETE', '/participant-registrations', ['json' => $payload]);
+        return $this->requestText('DELETE', '/participant-registrations', ['json' => $this->payloadToArray($payload)]);
     }
 
-    public function updateBusinessCard(array $payload): string
+    public function updateBusinessCard(array|PayloadInterface $payload): string
     {
-        return $this->requestText('PUT', '/participant-registrations/business-cards', ['json' => $payload]);
+        return $this->requestText('PUT', '/participant-registrations/business-cards', ['json' => $this->payloadToArray($payload)]);
     }
 
-    public function pushBusinessCard(array $payload): string
+    public function pushBusinessCard(array|PayloadInterface $payload): string
     {
-        return $this->requestText('POST', '/participant-registrations/business-cards/push', ['json' => $payload]);
+        return $this->requestText('POST', '/participant-registrations/business-cards/push', ['json' => $this->payloadToArray($payload)]);
     }
 
-    public function registerDocumentType(array $payload): array
+    public function registerDocumentType(array|PayloadInterface $payload): array
     {
-        return $this->requestJson('POST', '/participant-registrations/documents', ['json' => $payload]);
+        return $this->requestJson('POST', '/participant-registrations/documents', ['json' => $this->payloadToArray($payload)]);
     }
 
-    public function deregisterDocumentType(array $payload): string
+    public function deregisterDocumentType(array|PayloadInterface $payload): string
     {
-        return $this->requestText('DELETE', '/participant-registrations/documents', ['json' => $payload]);
+        return $this->requestText('DELETE', '/participant-registrations/documents', ['json' => $this->payloadToArray($payload)]);
     }
 
     public function generateIncomingPresignedUrl(string $documentUlid): string
@@ -368,7 +380,11 @@ class DokapiClient
             return $staticToken;
         }
 
-        $cacheKey = 'dokapi.access_token';
+        $cacheKey = 'dokapi.access_token.' . sha1(implode('|', [
+            (string) ($this->config['client_id'] ?? ''),
+            (string) ($this->config['token_url'] ?? ''),
+            (string) ($this->config['base_url'] ?? ''),
+        ]));
         if (($this->config['cache_token'] ?? true) && $this->cache) {
             $cached = $this->cache->get($cacheKey);
             if (is_string($cached) && $cached !== '') {
@@ -417,12 +433,25 @@ class DokapiClient
 
     protected function requestJson(string $method, string $path, array $options = [], bool $withAuth = true): array
     {
+        if (!isset($options['headers']['Accept'])) {
+            $options['headers']['Accept'] = 'application/json';
+        }
+
         $response = $this->requestRaw($method, $path, $options, $withAuth);
         $body = (string) $response->getBody();
 
-        $decoded = json_decode($body, true);
+        if ($body === '') {
+            return [];
+        }
+
+        try {
+            $decoded = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new DokapiException('Dokapi response was not valid JSON: ' . $e->getMessage(), 0, $e);
+        }
+
         if (!is_array($decoded)) {
-            throw new DokapiException('Dokapi response was not valid JSON.');
+            throw new DokapiException('Dokapi response JSON was not an object or array.');
         }
 
         return $decoded;
@@ -431,7 +460,20 @@ class DokapiClient
     protected function requestText(string $method, string $path, array $options = [], bool $withAuth = true): string
     {
         $response = $this->requestRaw($method, $path, $options, $withAuth);
-        return (string) $response->getBody();
+        $body = (string) $response->getBody();
+
+        if ($body !== '') {
+            try {
+                $decoded = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+                if (is_string($decoded)) {
+                    return $decoded;
+                }
+            } catch (\JsonException) {
+                // Ignore JSON parsing errors for plain text responses.
+            }
+        }
+
+        return $body;
     }
 
     protected function requestRaw(string $method, string $path, array $options = [], bool $withAuth = true): ResponseInterface
@@ -443,14 +485,38 @@ class DokapiClient
             'http_errors' => false,
         ];
 
-        if ($withAuth) {
-            $token = $this->getAccessToken();
-            $headers = $options['headers'] ?? [];
-            $headers['Authorization'] = 'Bearer ' . $token;
-            $options['headers'] = $headers;
+        $baseHeaders = [];
+        $userAgent = $this->config['user_agent'] ?? null;
+        if (is_string($userAgent) && $userAgent !== '') {
+            $baseHeaders['User-Agent'] = $userAgent;
         }
 
-        $requestOptions = array_merge($baseOptions, $options);
+        $extraOptions = $this->config['http'] ?? [];
+        if (!is_array($extraOptions)) {
+            $extraOptions = [];
+        }
+
+        $extraHeaders = $extraOptions['headers'] ?? [];
+        if (!is_array($extraHeaders)) {
+            $extraHeaders = [];
+        }
+
+        unset($extraOptions['headers']);
+
+        $headers = array_merge(
+            $baseHeaders,
+            $extraHeaders,
+            $options['headers'] ?? []
+        );
+
+        if ($withAuth) {
+            $token = $this->getAccessToken();
+            $headers['Authorization'] = 'Bearer ' . $token;
+        }
+
+        $options['headers'] = $headers;
+
+        $requestOptions = array_replace($baseOptions, $extraOptions, $options);
 
         try {
             $response = $this->http->request($method, $path, $requestOptions);

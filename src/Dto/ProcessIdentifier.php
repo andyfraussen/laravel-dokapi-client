@@ -2,7 +2,9 @@
 
 namespace AndyFraussen\Dokapi\Dto;
 
-final class ProcessIdentifier
+use AndyFraussen\Dokapi\Requests\PayloadInterface;
+
+final class ProcessIdentifier implements PayloadInterface
 {
     public readonly string $value;
     public readonly ?string $scheme;

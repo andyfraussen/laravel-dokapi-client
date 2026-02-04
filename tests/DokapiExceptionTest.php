@@ -3,6 +3,7 @@
 namespace AndyFraussen\Dokapi\Tests;
 
 use AndyFraussen\Dokapi\Clients\DokapiClient;
+use AndyFraussen\Dokapi\Dto\ProblemDetail;
 use AndyFraussen\Dokapi\Exceptions\DokapiAuthException;
 use AndyFraussen\Dokapi\Exceptions\DokapiClientException;
 use AndyFraussen\Dokapi\Exceptions\DokapiNotFoundException;
@@ -69,6 +70,30 @@ class DokapiExceptionTest extends DokapiTestCase
 
         $this->expectException(DokapiClientException::class);
         $client->listWebhooks();
+    }
+
+    #[Test]
+    public function it_exposes_problem_details_on_error_responses()
+    {
+        $body = json_encode([
+            'title' => 'Invalid request',
+            'detail' => 'The provided payload is invalid.',
+            'status' => 400,
+            'uuid' => '550e8400-e29b-41d4-a716-446655440000',
+        ]);
+
+        $client = $this->clientWithMockResponse(400, (string) $body);
+
+        try {
+            $client->listWebhooks();
+            $this->fail('Expected exception was not thrown.');
+        } catch (DokapiValidationException $exception) {
+            $problem = $exception->getProblemDetail();
+            $this->assertInstanceOf(ProblemDetail::class, $problem);
+            $this->assertSame('Invalid request', $problem->title);
+            $this->assertSame('The provided payload is invalid.', $problem->detail);
+            $this->assertSame(400, $problem->status);
+        }
     }
 
     private function clientWithMockResponse(int $status, string $body): DokapiClient

@@ -4,7 +4,7 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/andyfraussen/laravel-dokapi-client.svg?style=flat-square)](https://packagist.org/packages/andyfraussen/laravel-dokapi-client)
 [![License](https://img.shields.io/packagist/l/andyfraussen/laravel-dokapi-client.svg?style=flat-square)](LICENSE.md)
 
-A sleek, fluent, and strongly-typed Laravel client for the **Dokapi Peppol API**. Built for modern PHP 8.5+ and Laravel 12 environments.
+A sleek, fluent, and strongly-typed Laravel client for the **Dokapi Peppol API**. Built for modern PHP 8.3+ and Laravel 11/12 environments.
 
 ## Introduction
 
@@ -13,7 +13,7 @@ Dokapi for Laravel provides a high-level, expressive interface for interacting w
 - **Developer Experience First:** A fluent, discoverable API that feels native to Laravel.
 - **Type Safety:** Extensive use of DTOs ensures your IDE understands every response.
 - **Production Ready:** Built-in OAuth2 caching, signature verification, and granular error handling.
-- **Future Proof:** Fully optimized for PHP 8.5 and Laravel 12.
+- **Future Proof:** Fully optimized for PHP 8.3+ and Laravel 11/12.
 
 ## Installation
 
@@ -36,8 +36,19 @@ After publishing the configuration, you may define your Dokapi credentials in yo
 ```env
 DOKAPI_CLIENT_ID=your-client-id
 DOKAPI_CLIENT_SECRET=your-client-secret
-DOKAPI_BASE_URL=https://peppol-api.dokapi.io/v1
+DOKAPI_BASE_URL=https://peppol-api.dokapi-stg.io/v1
+DOKAPI_TOKEN_URL=https://dev-portal.dokapi.io/api/oauth2/token
+DOKAPI_ACCESS_TOKEN=
+DOKAPI_TIMEOUT=30
+DOKAPI_CONNECT_TIMEOUT=10
+DOKAPI_VERIFY=true
+DOKAPI_USER_AGENT=andyfraussen/laravel-dokapi-client
 ```
+
+The default `DOKAPI_BASE_URL` points to the staging environment defined in Dokapi's OpenAPI spec. Use the production base URL provided by Dokapi when you move to production.
+If you already have an access token, set `DOKAPI_ACCESS_TOKEN` to bypass OAuth2.
+
+For advanced HTTP tuning (proxies, custom headers, TLS options), you can pass Guzzle options via the `dokapi.http` config key.
 
 ## Usage
 
@@ -73,6 +84,12 @@ $request = new OutgoingDocumentRequest(
 
 $response = Dokapi::sendOutgoingDocument($request, $xml);
 ```
+
+### Error Handling
+
+All non-2xx responses throw a `DokapiRequestException` subclass (auth, validation, not found, rate limit, server, or client errors). You can access the raw response body with `getResponseBody()` or a parsed `ProblemDetail` (when available) with `getProblemDetail()`.
+
+Participant registrations can also return a 207 response with a `ProblemDetail` payload. In that case, `registerDto()` returns a `ProblemDetail` instance instead of a success DTO.
 
 ### Webhook Signature Verification
 

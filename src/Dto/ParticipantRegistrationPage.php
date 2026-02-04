@@ -18,15 +18,19 @@ final class ParticipantRegistrationPage
 
     public static function fromArray(array $data): self
     {
+        $itemsRaw = $data['Items'] ?? $data['items'] ?? [];
+        $countRaw = $data['Count'] ?? $data['count'] ?? 0;
+        $lastKeyRaw = $data['LastEvaluatedKey'] ?? $data['lastEvaluatedKey'] ?? null;
+
         $items = array_map(
             fn(array $item) => ParticipantRegistration::fromArray($item),
-            (array) ($data['Items'] ?? [])
+            (array) $itemsRaw
         );
 
         return new self(
             $items,
-            (float) ($data['Count'] ?? 0),
-            isset($data['LastEvaluatedKey']) ? (string) $data['LastEvaluatedKey'] : null
+            (float) $countRaw,
+            isset($lastKeyRaw) ? (string) $lastKeyRaw : null
         );
     }
 }
