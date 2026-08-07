@@ -94,7 +94,7 @@ class DokapiClient
 
     public function deleteWebhook(string $ulid): array
     {
-        return $this->requestJson('DELETE', "/webhooks/{$ulid}");
+        return $this->requestJson('DELETE', '/webhooks/' . $this->encodePathSegment($ulid));
     }
 
     public function deleteWebhookDto(string $ulid): DeleteWebhookResponse
@@ -359,12 +359,12 @@ class DokapiClient
 
     public function generateIncomingPresignedUrl(string $documentUlid): string
     {
-        return $this->requestText('POST', "/incoming-peppol-documents/{$documentUlid}/generate-presigned-url");
+        return $this->requestText('POST', '/incoming-peppol-documents/' . $this->encodePathSegment($documentUlid) . '/generate-presigned-url');
     }
 
     public function confirmIncomingDocument(string $documentUlid): string
     {
-        return $this->requestText('POST', "/incoming-peppol-documents/{$documentUlid}/confirm");
+        return $this->requestText('POST', '/incoming-peppol-documents/' . $this->encodePathSegment($documentUlid) . '/confirm');
     }
 
     public function verifyWebhookSignature(string $payload, string $signature, string $secret): bool
@@ -517,9 +517,10 @@ class DokapiClient
         $options['headers'] = $headers;
 
         $requestOptions = array_replace($baseOptions, $extraOptions, $options);
+        $requestOptions['http_errors'] = false;
 
         try {
-            $response = $this->http->request($method, $path, $requestOptions);
+            $response = $this->http->request($method, $this->resolveApiUrl($path), $requestOptions);
         } catch (GuzzleException $e) {
             throw new DokapiException('Dokapi request failed: ' . $e->getMessage(), 0, $e);
         }
@@ -531,6 +532,20 @@ class DokapiClient
         }
 
         return $response;
+    }
+
+    private function resolveApiUrl(string $path): string
+    {
+        if (filter_var($path, FILTER_VALIDATE_URL) !== false) {
+            return $path;
+        }
+
+        return rtrim((string) ($this->config['base_url'] ?? ''), '/') . '/' . ltrim($path, '/');
+    }
+
+    private function encodePathSegment(string $value): string
+    {
+        return rawurlencode($value);
     }
 
     protected function mapHttpException(int $statusCode, string $body): DokapiRequestException
