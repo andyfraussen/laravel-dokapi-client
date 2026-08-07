@@ -34,6 +34,8 @@ use Psr\Http\Message\ResponseInterface;
 
 class DokapiClient
 {
+    private const TOKEN_CACHE_SAFETY_MARGIN_SECONDS = 60;
+
     protected array $config;
     protected Client $http;
     protected ?CacheRepository $cache;
@@ -411,15 +413,17 @@ class DokapiClient
             false
         );
 
-        if (empty($decoded['access_token'])) {
+        if (!isset($decoded['access_token']) || !is_string($decoded['access_token']) || $decoded['access_token'] === '') {
             throw new DokapiException('Dokapi token response did not include access_token.');
         }
 
-        $token = (string) $decoded['access_token'];
-        $expiresIn = (int) ($decoded['expires_in'] ?? 3600);
+        $token = $decoded['access_token'];
+        $expiresIn = $decoded['expires_in'] ?? null;
+        $ttl = is_numeric($expiresIn)
+            ? (int) $expiresIn - self::TOKEN_CACHE_SAFETY_MARGIN_SECONDS
+            : null;
 
-        if (($this->config['cache_token'] ?? true) && $this->cache) {
-            $ttl = max(60, $expiresIn - 60);
+        if ($ttl !== null && $ttl > 0 && ($this->config['cache_token'] ?? true) && $this->cache) {
             $this->cache->put($cacheKey, $token, $ttl);
         }
 
