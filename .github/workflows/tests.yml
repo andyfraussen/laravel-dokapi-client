@@ -1,0 +1,31 @@
+name: Tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php: '8.4'
+            illuminate: '^12.0'
+            testbench: '^10.0'
+          - php: '8.5'
+            illuminate: '^13.0'
+            testbench: '^11.0'
+    steps:
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+      - run: composer update --no-interaction --prefer-dist --with=illuminate/support:${{ matrix.illuminate }} --with=illuminate/cache:${{ matrix.illuminate }} --with=orchestra/testbench:${{ matrix.testbench }}
+      - run: composer validate --strict --no-check-publish
+      - run: composer audit
+      - run: composer test
+      - run: composer phpstan
