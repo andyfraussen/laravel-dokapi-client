@@ -177,12 +177,7 @@ class DokapiClient
      */
     public function uploadDocument(string $uploadUrl, string $xmlContent): void
     {
-        $this->requestRaw('PUT', $uploadUrl, [
-            'headers' => [
-                'Content-Type' => 'application/xml',
-            ],
-            'body' => $xmlContent,
-        ], false);
+        $this->requestUpload($uploadUrl, $xmlContent);
     }
 
     public function createValidatingDocument(array|PayloadInterface $payload = []): array
@@ -546,6 +541,42 @@ class DokapiClient
     private function encodePathSegment(string $value): string
     {
         return rawurlencode($value);
+    }
+
+    private function requestUpload(string $uploadUrl, string $xmlContent): void
+    {
+        $uploadUrl = $this->validateUploadUrl($uploadUrl);
+
+        try {
+            $response = $this->http->request('PUT', $uploadUrl, [
+                'timeout' => $this->config['timeout'] ?? 30,
+                'connect_timeout' => $this->config['connect_timeout'] ?? 10,
+                'verify' => $this->config['verify'] ?? true,
+                'http_errors' => false,
+                'allow_redirects' => false,
+                'headers' => [
+                    'Content-Type' => 'application/xml',
+                ],
+                'body' => $xmlContent,
+            ]);
+        } catch (GuzzleException $e) {
+            throw new DokapiException('Dokapi document upload failed: ' . $e->getMessage(), 0, $e);
+        }
+
+        $statusCode = $response->getStatusCode();
+        if ($statusCode < 200 || $statusCode >= 300) {
+            throw $this->mapHttpException($statusCode, (string) $response->getBody());
+        }
+    }
+
+    private function validateUploadUrl(string $uploadUrl): string
+    {
+        $parts = parse_url($uploadUrl);
+        if (!is_array($parts) || strtolower((string) ($parts['scheme'] ?? '')) !== 'https' || empty($parts['host'])) {
+            throw new DokapiException('Dokapi document upload URL must be an absolute HTTPS URL.');
+        }
+
+        return $uploadUrl;
     }
 
     protected function mapHttpException(int $statusCode, string $body): DokapiRequestException
