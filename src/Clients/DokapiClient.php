@@ -552,7 +552,7 @@ class DokapiClient
         $uploadUrl = $this->validateUploadUrl($uploadUrl);
 
         try {
-            $response = $this->http->request('PUT', $uploadUrl, [
+            $response = $this->uploadHttpClient()->request('PUT', $uploadUrl, [
                 'timeout' => $this->config['timeout'] ?? 30,
                 'connect_timeout' => $this->config['connect_timeout'] ?? 10,
                 'verify' => $this->config['verify'] ?? true,
@@ -581,6 +581,13 @@ class DokapiClient
         }
 
         return $uploadUrl;
+    }
+
+    private function uploadHttpClient(): Client
+    {
+        return new Client([
+            'handler' => $this->http->getConfig('handler'),
+        ]);
     }
 
     protected function mapHttpException(int $statusCode, string $body): DokapiRequestException

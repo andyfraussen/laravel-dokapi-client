@@ -92,6 +92,24 @@ class DokapiHttpBoundaryTest extends DokapiTestCase
         $this->assertArrayNotHasKey('query', $this->history[0]['options']);
     }
 
+    #[Test]
+    public function it_does_not_send_injected_client_default_headers_to_a_presigned_upload_url(): void
+    {
+        $client = $this->historyClient([new Response(200)], [
+            'headers' => [
+                'Authorization' => 'Bearer injected-secret',
+                'Cookie' => 'session=injected-secret',
+                'X-Internal' => 'injected-secret',
+            ],
+        ]);
+
+        $this->client($client)->uploadDocument('https://upload.example.test/object', '<invoice/>');
+
+        $this->assertFalse($this->history[0]['request']->hasHeader('Authorization'));
+        $this->assertFalse($this->history[0]['request']->hasHeader('Cookie'));
+        $this->assertFalse($this->history[0]['request']->hasHeader('X-Internal'));
+    }
+
     #[DataProvider('invalidUploadUrls')]
     #[Test]
     public function it_rejects_non_https_or_relative_upload_urls(string $uploadUrl): void
@@ -112,14 +130,14 @@ class DokapiHttpBoundaryTest extends DokapiTestCase
     /**
      * @param array<int, Response> $responses
      */
-    private function historyClient(array $responses): Client
+    private function historyClient(array $responses, array $options = []): Client
     {
         $this->history = [];
 
         $stack = HandlerStack::create(new MockHandler($responses));
         $stack->push(Middleware::history($this->history));
 
-        return new Client(['handler' => $stack]);
+        return new Client(array_replace($options, ['handler' => $stack]));
     }
 
     private function client(Client $http, array $overrides = []): DokapiClient

@@ -68,16 +68,24 @@ class DokapiTokenCacheTest extends DokapiTestCase
         $this->assertSame(2, $this->countTokenRequests());
     }
 
+    #[DataProvider('invalidAccessTokens')]
     #[Test]
-    public function it_rejects_non_string_oauth_access_tokens(): void
+    public function it_rejects_invalid_oauth_access_tokens(mixed $accessToken): void
     {
         $dokapi = $this->clientWithResponses([
-            $this->tokenResponse(123, 3600),
+            $this->tokenResponse($accessToken, 3600),
         ]);
 
         $this->expectException(DokapiException::class);
 
         $dokapi->listWebhooks();
+    }
+
+    public static function invalidAccessTokens(): iterable
+    {
+        yield 'blank string' => [''];
+        yield 'integer' => [123];
+        yield 'array' => [[]];
     }
 
     public static function uncacheableExpiryValues(): iterable
