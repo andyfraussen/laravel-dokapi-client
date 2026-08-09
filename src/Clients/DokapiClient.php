@@ -34,6 +34,8 @@ use Psr\Http\Message\ResponseInterface;
 
 class DokapiClient
 {
+    private const TOKEN_CACHE_SAFETY_MARGIN_SECONDS = 60;
+
     protected array $config;
     protected Client $http;
     protected ?CacheRepository $cache;
@@ -94,7 +96,7 @@ class DokapiClient
 
     public function deleteWebhook(string $ulid): array
     {
-        return $this->requestJson('DELETE', "/webhooks/{$ulid}");
+        return $this->requestJson('DELETE', '/webhooks/' . $this->encodePathSegment($ulid));
     }
 
     public function deleteWebhookDto(string $ulid): DeleteWebhookResponse
@@ -177,12 +179,7 @@ class DokapiClient
      */
     public function uploadDocument(string $uploadUrl, string $xmlContent): void
     {
-        $this->requestRaw('PUT', $uploadUrl, [
-            'headers' => [
-                'Content-Type' => 'application/xml',
-            ],
-            'body' => $xmlContent,
-        ], false);
+        $this->requestUpload($uploadUrl, $xmlContent);
     }
 
     public function createValidatingDocument(array|PayloadInterface $payload = []): array
@@ -359,12 +356,12 @@ class DokapiClient
 
     public function generateIncomingPresignedUrl(string $documentUlid): string
     {
-        return $this->requestText('POST', "/incoming-peppol-documents/{$documentUlid}/generate-presigned-url");
+        return $this->requestText('POST', '/incoming-peppol-documents/' . $this->encodePathSegment($documentUlid) . '/generate-presigned-url');
     }
 
     public function confirmIncomingDocument(string $documentUlid): string
     {
-        return $this->requestText('POST', "/incoming-peppol-documents/{$documentUlid}/confirm");
+        return $this->requestText('POST', '/incoming-peppol-documents/' . $this->encodePathSegment($documentUlid) . '/confirm');
     }
 
     public function verifyWebhookSignature(string $payload, string $signature, string $secret): bool
@@ -416,15 +413,17 @@ class DokapiClient
             false
         );
 
-        if (empty($decoded['access_token'])) {
+        if (!isset($decoded['access_token']) || !is_string($decoded['access_token']) || $decoded['access_token'] === '') {
             throw new DokapiException('Dokapi token response did not include access_token.');
         }
 
-        $token = (string) $decoded['access_token'];
-        $expiresIn = (int) ($decoded['expires_in'] ?? 3600);
+        $token = $decoded['access_token'];
+        $expiresIn = $decoded['expires_in'] ?? null;
+        $ttl = is_numeric($expiresIn)
+            ? (int) $expiresIn - self::TOKEN_CACHE_SAFETY_MARGIN_SECONDS
+            : null;
 
-        if (($this->config['cache_token'] ?? true) && $this->cache) {
-            $ttl = max(60, $expiresIn - 60);
+        if ($ttl !== null && $ttl > 0 && ($this->config['cache_token'] ?? true) && $this->cache) {
             $this->cache->put($cacheKey, $token, $ttl);
         }
 
@@ -517,9 +516,10 @@ class DokapiClient
         $options['headers'] = $headers;
 
         $requestOptions = array_replace($baseOptions, $extraOptions, $options);
+        $requestOptions['http_errors'] = false;
 
         try {
-            $response = $this->http->request($method, $path, $requestOptions);
+            $response = $this->http->request($method, $this->resolveApiUrl($path), $requestOptions);
         } catch (GuzzleException $e) {
             throw new DokapiException('Dokapi request failed: ' . $e->getMessage(), 0, $e);
         }
@@ -531,6 +531,63 @@ class DokapiClient
         }
 
         return $response;
+    }
+
+    private function resolveApiUrl(string $path): string
+    {
+        if (filter_var($path, FILTER_VALIDATE_URL) !== false) {
+            return $path;
+        }
+
+        return rtrim((string) ($this->config['base_url'] ?? ''), '/') . '/' . ltrim($path, '/');
+    }
+
+    private function encodePathSegment(string $value): string
+    {
+        return rawurlencode($value);
+    }
+
+    private function requestUpload(string $uploadUrl, string $xmlContent): void
+    {
+        $uploadUrl = $this->validateUploadUrl($uploadUrl);
+
+        try {
+            $response = $this->uploadHttpClient()->request('PUT', $uploadUrl, [
+                'timeout' => $this->config['timeout'] ?? 30,
+                'connect_timeout' => $this->config['connect_timeout'] ?? 10,
+                'verify' => $this->config['verify'] ?? true,
+                'http_errors' => false,
+                'allow_redirects' => false,
+                'headers' => [
+                    'Content-Type' => 'application/xml',
+                ],
+                'body' => $xmlContent,
+            ]);
+        } catch (GuzzleException $e) {
+            throw new DokapiException('Dokapi document upload failed: ' . $e->getMessage(), 0, $e);
+        }
+
+        $statusCode = $response->getStatusCode();
+        if ($statusCode < 200 || $statusCode >= 300) {
+            throw $this->mapHttpException($statusCode, (string) $response->getBody());
+        }
+    }
+
+    private function validateUploadUrl(string $uploadUrl): string
+    {
+        $parts = parse_url($uploadUrl);
+        if (!is_array($parts) || strtolower((string) ($parts['scheme'] ?? '')) !== 'https' || empty($parts['host'])) {
+            throw new DokapiException('Dokapi document upload URL must be an absolute HTTPS URL.');
+        }
+
+        return $uploadUrl;
+    }
+
+    private function uploadHttpClient(): Client
+    {
+        return new Client([
+            'handler' => $this->http->getConfig('handler'),
+        ]);
     }
 
     protected function mapHttpException(int $statusCode, string $body): DokapiRequestException

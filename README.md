@@ -4,7 +4,7 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/andyfraussen/laravel-dokapi-client.svg?style=flat-square)](https://packagist.org/packages/andyfraussen/laravel-dokapi-client)
 [![License](https://img.shields.io/packagist/l/andyfraussen/laravel-dokapi-client.svg?style=flat-square)](LICENSE.md)
 
-A sleek, fluent, and strongly-typed Laravel client for the **Dokapi Peppol API**. Built for modern PHP 8.3+ and Laravel 11/12 environments.
+A sleek, fluent, and strongly-typed Laravel client for the **Dokapi Peppol API**. Built for modern PHP 8.3+ and Laravel 12/13 environments.
 
 ## Introduction
 
@@ -13,7 +13,7 @@ Dokapi for Laravel provides a high-level, expressive interface for interacting w
 - **Developer Experience First:** A fluent, discoverable API that feels native to Laravel.
 - **Type Safety:** Extensive use of DTOs ensures your IDE understands every response.
 - **Production Ready:** Built-in OAuth2 caching, signature verification, and granular error handling.
-- **Future Proof:** Fully optimized for PHP 8.3+ and Laravel 11/12.
+- **Future Proof:** Fully optimized for PHP 8.3+ and Laravel 12/13.
 
 ## Installation
 
@@ -39,6 +39,8 @@ DOKAPI_CLIENT_SECRET=your-client-secret
 DOKAPI_BASE_URL=https://peppol-api.dokapi-stg.io/v1
 DOKAPI_TOKEN_URL=https://dev-portal.dokapi.io/api/oauth2/token
 DOKAPI_ACCESS_TOKEN=
+DOKAPI_WEBHOOK_SECRET=
+DOKAPI_CACHE_TOKEN=true
 DOKAPI_TIMEOUT=30
 DOKAPI_CONNECT_TIMEOUT=10
 DOKAPI_VERIFY=true
@@ -98,11 +100,13 @@ Security is paramount. Verify incoming webhooks with ease:
 ```php
 use AndyFraussen\Dokapi\Facades\Dokapi;
 
-$isValid = Dokapi::webhooks()->verifySignature(
-    payload: $request->getContent(),
-    signature: $request->header('X-Dokapi-Signature'),
-    secret: config('dokapi.webhook_secret')
-);
+$signature = $request->header('X-Dokapi-Signature');
+$secret = config('dokapi.webhook_secret');
+
+$isValid = is_string($signature)
+    && is_string($secret)
+    && $secret !== ''
+    && Dokapi::api()->webhooks->verifySignature($request->getContent(), $signature, $secret);
 ```
 
 ## Testing

@@ -46,7 +46,7 @@ class DokapiValidationTest extends DokapiTestCase
 
         $this->assertSame('https://upload.example.com/put', $response->preSignedUploadUrl);
         $this->assertCount(3, $historyContainer);
-        $this->assertSame('/validating-peppol-documents', $historyContainer[1]['request']->getUri()->getPath());
+        $this->assertSame('/v1/validating-peppol-documents', $historyContainer[1]['request']->getUri()->getPath());
         $this->assertSame('PUT', $historyContainer[2]['request']->getMethod());
     }
 }

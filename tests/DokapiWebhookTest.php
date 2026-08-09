@@ -64,7 +64,7 @@ class DokapiWebhookTest extends DokapiTestCase
         $this->assertSame('Webhook created successfully', $response['message']);
         $this->assertCount(2, $historyContainer);
         $this->assertSame('POST', $historyContainer[1]['request']->getMethod());
-        $this->assertSame('/webhooks', $historyContainer[1]['request']->getUri()->getPath());
+        $this->assertSame('/v1/webhooks', $historyContainer[1]['request']->getUri()->getPath());
 
         $dto = $dokapi->api()->webhooks->createDto($payload);
         $this->assertSame('https://example.com/webhook', $dto->webhook->url);

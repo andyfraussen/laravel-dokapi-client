@@ -15,6 +15,7 @@ return [
     'client_id' => env('DOKAPI_CLIENT_ID'),
     'client_secret' => env('DOKAPI_CLIENT_SECRET'),
     'access_token' => env('DOKAPI_ACCESS_TOKEN'),
+    'webhook_secret' => env('DOKAPI_WEBHOOK_SECRET'),
     'cache_token' => env('DOKAPI_CACHE_TOKEN', true),
     'timeout' => env('DOKAPI_TIMEOUT', 30),
     'connect_timeout' => env('DOKAPI_CONNECT_TIMEOUT', 10),

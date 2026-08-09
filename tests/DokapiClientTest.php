@@ -83,7 +83,7 @@ class DokapiClientTest extends DokapiTestCase
         $this->assertSame('POST', $historyContainer[0]['request']->getMethod());
         $this->assertSame('/api/oauth2/token', $historyContainer[0]['request']->getUri()->getPath());
         $this->assertSame('POST', $historyContainer[1]['request']->getMethod());
-        $this->assertSame('/outgoing-peppol-documents', $historyContainer[1]['request']->getUri()->getPath());
+        $this->assertSame('/v1/outgoing-peppol-documents', $historyContainer[1]['request']->getUri()->getPath());
         $this->assertSame('PUT', $historyContainer[2]['request']->getMethod());
 
         $payload = new OutgoingDocumentRequest(
