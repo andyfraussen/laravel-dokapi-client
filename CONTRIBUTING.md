@@ -13,3 +13,11 @@ Contributions are welcome and will be fully credited.
 ## Bug Reports
 
 Please open an issue on GitHub for any bug reports or feature requests.
+
+For suspected security vulnerabilities, follow [SECURITY.md](SECURITY.md) and report
+privately rather than opening a public issue.
+
+## Maintainers
+
+See [RELEASING.md](RELEASING.md) for validation, release verification, action pin
+maintenance and handover procedures.
