@@ -1,0 +1,18 @@
+{
+  "event": "mandate.capability.active",
+  "ulid": "01KWEBHOOK00000000000000001",
+  "body": {
+    "ulid": "01KJB1A7R3M9X2Q8V4N6T5W0YD",
+    "participantIdentifier": {
+      "scheme": "iso6523-actorid-upis",
+      "value": "0208:0123456789"
+    },
+    "scope": "receiving",
+    "status": "ACTIVE",
+    "statusMessage": "Capability activated on 2026-09-01T02:14:51.660Z \u2014 peppol registration completed",
+    "startDate": "2026-09-01",
+    "activatedAt": "2026-09-01T02:14:51.660Z",
+    "mandateUlid": "01KJB2M6R4QP8XCT0V9E5NH7WD",
+    "clientUlid": "01KCLIENT000000000000000001"
+  }
+}

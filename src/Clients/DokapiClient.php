@@ -5,9 +5,14 @@ namespace AndyFraussen\Dokapi\Clients;
 use AndyFraussen\Dokapi\Api\DokapiApi;
 use AndyFraussen\Dokapi\Dto\ClientCancellationResponse;
 use AndyFraussen\Dokapi\Dto\ClientCounterCollection;
+use AndyFraussen\Dokapi\Dto\ClientInfo;
 use AndyFraussen\Dokapi\Dto\CreateParticipantRegistrationResponse;
 use AndyFraussen\Dokapi\Dto\CreateWebhookResponse;
 use AndyFraussen\Dokapi\Dto\DeleteWebhookResponse;
+use AndyFraussen\Dokapi\Dto\MandatoryDocumentTypeCollection;
+use AndyFraussen\Dokapi\Dto\Mandates\Mandate;
+use AndyFraussen\Dokapi\Dto\Mandates\MandatePage;
+use AndyFraussen\Dokapi\Dto\Mandates\MandateResponse;
 use AndyFraussen\Dokapi\Dto\OutgoingDocumentResponse;
 use AndyFraussen\Dokapi\Dto\ParticipantRegistration;
 use AndyFraussen\Dokapi\Dto\ParticipantRegistrationPage;
@@ -24,6 +29,7 @@ use AndyFraussen\Dokapi\Exceptions\DokapiNotFoundException;
 use AndyFraussen\Dokapi\Exceptions\DokapiRateLimitException;
 use AndyFraussen\Dokapi\Exceptions\DokapiRequestException;
 use AndyFraussen\Dokapi\Exceptions\DokapiServerException;
+use AndyFraussen\Dokapi\Exceptions\DokapiUploadException;
 use AndyFraussen\Dokapi\Exceptions\DokapiValidationException;
 use AndyFraussen\Dokapi\Requests\PayloadInterface;
 use GuzzleHttp\Client;
@@ -40,6 +46,7 @@ class DokapiClient
     protected Client $http;
     protected ?CacheRepository $cache;
     protected ?DokapiApi $api = null;
+    private ?self $mandateClient = null;
 
     public function __construct(array $config, ?Client $http = null, ?CacheRepository $cache = null)
     {
@@ -57,6 +64,66 @@ class DokapiClient
         }
 
         return $this->api;
+    }
+
+    /** A client sharing credentials and transport, targeting the configured Mandate API. */
+    public function forMandates(): self
+    {
+        if ($this->mandateClient === null) {
+            $baseUrl = $this->config['mandate_base_url'] ?? null;
+            $parts = is_string($baseUrl) ? parse_url($baseUrl) : false;
+            if (!is_array($parts) || strtolower($parts['scheme'] ?? '') !== 'https' || empty($parts['host'])
+                || isset($parts['user']) || isset($parts['pass']) || isset($parts['query']) || isset($parts['fragment'])) {
+                throw new DokapiException('Configure dokapi.mandate_base_url with an absolute HTTPS API URL.');
+            }
+
+            $this->mandateClient = new self(array_replace($this->config, ['base_url' => $baseUrl]), $this->http, $this->cache);
+        }
+
+        return $this->mandateClient;
+    }
+
+    public function requestBelgiumMandate(array|PayloadInterface $payload): array
+    {
+        return $this->forMandates()->requestJson('POST', '/mandates/be', ['json' => $this->payloadToArray($payload)]);
+    }
+
+    public function requestBelgiumMandateDto(array|PayloadInterface $payload): MandateResponse
+    {
+        return MandateResponse::fromArray($this->requestBelgiumMandate($payload));
+    }
+
+    public function getMandate(string $ulid): array
+    {
+        return $this->forMandates()->requestJson('GET', '/mandates/' . $this->encodePathSegment($ulid));
+    }
+
+    public function getMandateDto(string $ulid): Mandate
+    {
+        return Mandate::fromArray($this->getMandate($ulid));
+    }
+
+    public function listMandates(?string $lastEvaluatedKey = null, ?int $limit = null): array
+    {
+        $query = [];
+        if ($lastEvaluatedKey !== null && $lastEvaluatedKey !== '') {
+            $query['lastEvaluatedKey'] = $lastEvaluatedKey;
+        }
+        if ($limit !== null) {
+            $query['limit'] = $limit;
+        }
+
+        return $this->forMandates()->requestJson('GET', '/mandates', ['query' => $query]);
+    }
+
+    public function listMandatesDto(?string $lastEvaluatedKey = null, ?int $limit = null): MandatePage
+    {
+        return MandatePage::fromArray($this->listMandates($lastEvaluatedKey, $limit));
+    }
+
+    public function uploadMandateDocument(string $uploadUrl, string $content, string $contentType = 'application/pdf'): void
+    {
+        $this->requestUpload($uploadUrl, $content, $contentType);
     }
 
     protected function payloadToArray(array|PayloadInterface $payload): array
@@ -134,6 +201,26 @@ class DokapiClient
         return $this->requestJson('POST', '/clients/deactivate-client-registration');
     }
 
+    public function getClientInfo(): array
+    {
+        return $this->requestJson('GET', '/clients');
+    }
+
+    public function getClientInfoDto(): ClientInfo
+    {
+        return ClientInfo::fromArray($this->getClientInfo());
+    }
+
+    public function getMandatoryDocumentTypes(string $icd): array
+    {
+        return $this->requestJson('GET', '/participant-registrations/mandatory-document-types', ['query' => ['icd' => $icd]]);
+    }
+
+    public function getMandatoryDocumentTypesDto(string $icd): MandatoryDocumentTypeCollection
+    {
+        return MandatoryDocumentTypeCollection::fromArray($this->getMandatoryDocumentTypes($icd));
+    }
+
     public function deactivateClientRegistrationDto(): ClientCancellationResponse
     {
         return ClientCancellationResponse::fromArray($this->deactivateClientRegistration());
@@ -150,13 +237,7 @@ class DokapiClient
     public function sendOutgoingDocument(array|PayloadInterface $metadata, string $xmlContent): array
     {
         $response = $this->createOutgoingDocument($metadata);
-        $uploadUrl = $response['preSignedUploadUrl'] ?? null;
-
-        if (!$uploadUrl) {
-            throw new DokapiException('Dokapi did not return a preSignedUploadUrl.');
-        }
-
-        $this->uploadDocument($uploadUrl, $xmlContent);
+        $this->uploadCreatedDocument($response, $xmlContent);
 
         return $response;
     }
@@ -184,19 +265,13 @@ class DokapiClient
 
     public function createValidatingDocument(array|PayloadInterface $payload = []): array
     {
-        return $this->requestJson('POST', '/validating-peppol-documents', ['json' => $this->payloadToArray($payload)]);
+        return $this->requestJson('POST', '/validating-peppol-documents', ['json' => (object) $this->payloadToArray($payload)]);
     }
 
     public function sendValidatingDocument(string $xmlContent, array|PayloadInterface $payload = []): array
     {
         $response = $this->createValidatingDocument($payload);
-        $uploadUrl = $response['preSignedUploadUrl'] ?? null;
-
-        if (!$uploadUrl) {
-            throw new DokapiException('Dokapi did not return a preSignedUploadUrl for validation.');
-        }
-
-        $this->uploadDocument($uploadUrl, $xmlContent);
+        $this->uploadCreatedDocument($response, $xmlContent);
 
         return $response;
     }
@@ -366,8 +441,36 @@ class DokapiClient
 
     public function verifyWebhookSignature(string $payload, string $signature, string $secret): bool
     {
+        if ($secret === '') {
+            return false;
+        }
+
         $computed = hash_hmac('sha256', $payload, $secret);
         return hash_equals($computed, $signature);
+    }
+
+    public function forgetAccessToken(): void
+    {
+        if (($this->config['cache_token'] ?? true) && $this->cache) {
+            $this->cache->forget($this->tokenCacheKey());
+        }
+    }
+
+    /** Clear the cached OAuth token and fetch a new one; static access tokens remain unchanged. */
+    public function refreshAccessToken(): string
+    {
+        $this->forgetAccessToken();
+
+        return $this->getAccessToken();
+    }
+
+    private function tokenCacheKey(): string
+    {
+        return 'dokapi.access_token.' . sha1(implode('|', [
+            (string) ($this->config['client_id'] ?? ''),
+            (string) ($this->config['token_url'] ?? ''),
+            (string) ($this->config['base_url'] ?? ''),
+        ]));
     }
 
     protected function getAccessToken(): string
@@ -377,11 +480,7 @@ class DokapiClient
             return $staticToken;
         }
 
-        $cacheKey = 'dokapi.access_token.' . sha1(implode('|', [
-            (string) ($this->config['client_id'] ?? ''),
-            (string) ($this->config['token_url'] ?? ''),
-            (string) ($this->config['base_url'] ?? ''),
-        ]));
+        $cacheKey = $this->tokenCacheKey();
         if (($this->config['cache_token'] ?? true) && $this->cache) {
             $cached = $this->cache->get($cacheKey);
             if (is_string($cached) && $cached !== '') {
@@ -526,6 +625,9 @@ class DokapiClient
 
         $statusCode = $response->getStatusCode();
         if ($statusCode < 200 || $statusCode >= 300) {
+            if ($statusCode === 401 && $withAuth) {
+                $this->forgetAccessToken();
+            }
             $body = (string) $response->getBody();
             throw $this->mapHttpException($statusCode, $body);
         }
@@ -547,7 +649,21 @@ class DokapiClient
         return rawurlencode($value);
     }
 
-    private function requestUpload(string $uploadUrl, string $xmlContent): void
+    private function uploadCreatedDocument(array $response, string $xmlContent): void
+    {
+        try {
+            $uploadUrl = $response['preSignedUploadUrl'] ?? null;
+            if (!is_string($uploadUrl) || $uploadUrl === '') {
+                throw new DokapiException('Dokapi did not return a preSignedUploadUrl.');
+            }
+
+            $this->uploadDocument($uploadUrl, $xmlContent);
+        } catch (DokapiException $exception) {
+            throw new DokapiUploadException($response, $exception);
+        }
+    }
+
+    private function requestUpload(string $uploadUrl, string $xmlContent, string $contentType = 'application/xml'): void
     {
         $uploadUrl = $this->validateUploadUrl($uploadUrl);
 
@@ -559,7 +675,7 @@ class DokapiClient
                 'http_errors' => false,
                 'allow_redirects' => false,
                 'headers' => [
-                    'Content-Type' => 'application/xml',
+                    'Content-Type' => $contentType,
                 ],
                 'body' => $xmlContent,
             ]);

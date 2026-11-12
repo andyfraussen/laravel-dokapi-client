@@ -5,6 +5,7 @@ namespace AndyFraussen\Dokapi\Api;
 use AndyFraussen\Dokapi\Api\Resources\ClientResource;
 use AndyFraussen\Dokapi\Api\Resources\CountersResource;
 use AndyFraussen\Dokapi\Api\Resources\IncomingDocumentsResource;
+use AndyFraussen\Dokapi\Api\Resources\MandatesResource;
 use AndyFraussen\Dokapi\Api\Resources\OutgoingDocumentsResource;
 use AndyFraussen\Dokapi\Api\Resources\ParticipantsResource;
 use AndyFraussen\Dokapi\Api\Resources\StatusResource;
@@ -22,6 +23,7 @@ class DokapiApi
     public readonly IncomingDocumentsResource $incomingDocuments;
     public readonly CountersResource $counters;
     public readonly ClientResource $client;
+    public readonly MandatesResource $mandates;
 
     public function __construct(DokapiClient $client)
     {
@@ -33,5 +35,6 @@ class DokapiApi
         $this->incomingDocuments = new IncomingDocumentsResource($client);
         $this->counters = new CountersResource($client);
         $this->client = new ClientResource($client);
+        $this->mandates = new MandatesResource($client);
     }
 }

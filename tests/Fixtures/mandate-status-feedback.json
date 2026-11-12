@@ -1,0 +1,23 @@
+{
+  "event": "mandate.reviewed",
+  "ulid": "01KWEBHOOK00000000000000002",
+  "body": {
+    "ulid": "01KJB2M6R4QP8XCT0V9E5NH7WD",
+    "clientUlid": "01KCLIENT000000000000000001",
+    "status": "REVIEWED",
+    "statusMessage": "Reviewed",
+    "identifier": {
+      "kbo": "0123456789"
+    },
+    "peppolEntities": [
+      {
+        "participantIdentifier": {
+          "scheme": "iso6523-actorid-upis",
+          "value": "0208:0123456789"
+        },
+        "sendingCapabilities": true,
+        "receivingCapabilities": true
+      }
+    ]
+  }
+}

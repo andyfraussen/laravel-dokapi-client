@@ -1,0 +1,635 @@
+{
+  "items": [
+    {
+      "ulid": "01KJB2M6R4QP8XCT0V9E5NH7WD",
+      "countryCode": "BE",
+      "contractType": "THIRD_PARTY_CONTRACT_BASED",
+      "creationTimestamp": "2026-08-15T09:12:44.318Z",
+      "startDate": "2026-09-01",
+      "identifier": {
+        "kbo": "0123456789"
+      },
+      "peppolEntities": [
+        {
+          "participantIdentifier": {
+            "scheme": "iso6523-actorid-upis",
+            "value": "0208:0123456789"
+          },
+          "sendingCapabilities": true,
+          "receivingCapabilities": true
+        }
+      ],
+      "status": "REVIEWED",
+      "lastModifiedTimestamp": "2026-08-15T09:12:44.318Z",
+      "statusMessage": "Mandate reviewed on 2026-08-15T09:12:44.318Z",
+      "kycData": {
+        "company": {
+          "name": "Example Company BV",
+          "address": {
+            "streetName": "Main Street 12",
+            "additionalStreetName": "Box 3",
+            "cityName": "Antwerp",
+            "postalZone": "2000",
+            "countrySubentity": "Antwerp",
+            "countryCode": "BE"
+          },
+          "contactEmail": "invoicing@example-company.be"
+        },
+        "representative": {
+          "personalInformation": {
+            "firstName": "Jane",
+            "lastName": "Doe"
+          },
+          "dateOfBirth": "1982-11-05",
+          "email": "jane.doe@example-company.be",
+          "role": "Managing Director"
+        },
+        "participantAgreement": {
+          "date": "2026-08-15",
+          "version": "1.0",
+          "paid": true,
+          "signer": {
+            "firstName": "Jane",
+            "lastName": "Doe"
+          }
+        },
+        "additionalDocuments": [
+          "01KJAHTSTJNZ1M7F6KW2Y2X4ZQ/01KJB2M6R4QP8XCT0V9E5NH7WD/additional-documents/01KJB0Z2W8H4Q1JN6R5T3Y7B9C"
+        ]
+      },
+      "kycDataHistory": [
+        {
+          "kycData": {
+            "company": {
+              "name": "Example Company BV",
+              "address": {
+                "streetName": "Main Street 12",
+                "additionalStreetName": "Box 3",
+                "cityName": "Antwerp",
+                "postalZone": "2000",
+                "countrySubentity": "Antwerp",
+                "countryCode": "BE"
+              },
+              "contactEmail": "invoicing@example-company.be"
+            },
+            "representative": {
+              "personalInformation": {
+                "firstName": "Jane",
+                "lastName": "Doe"
+              },
+              "dateOfBirth": "1982-11-05",
+              "email": "jane.doe@example-company.be",
+              "role": "Managing Director"
+            },
+            "participantAgreement": {
+              "date": "2026-08-15",
+              "version": "1.0",
+              "paid": true,
+              "signer": {
+                "firstName": "Jane",
+                "lastName": "Doe"
+              }
+            },
+            "additionalDocuments": [
+              "01KJAHTSTJNZ1M7F6KW2Y2X4ZQ/01KJB2M6R4QP8XCT0V9E5NH7WD/additional-documents/01KJB0Z2W8H4Q1JN6R5T3Y7B9C"
+            ]
+          },
+          "submittedBy": "integration@example-company.be",
+          "submittedAt": "2026-08-15T09:12:44.318Z"
+        }
+      ],
+      "capabilities": [
+        {
+          "ulid": "01KJB1A7R3M9X2Q8V4N6T5W0YD",
+          "participantIdentifier": {
+            "scheme": "iso6523-actorid-upis",
+            "value": "0208:0123456789"
+          },
+          "scope": "receiving",
+          "status": "ACTIVE",
+          "statusMessage": "Capability activated on 2026-09-01T02:14:51.660Z \u2014 peppol registration completed",
+          "startDate": "2026-09-01",
+          "activatedAt": "2026-09-01T02:14:51.660Z"
+        },
+        {
+          "ulid": "01KJB1A7R3M9X2Q8V4N6T5W0YE",
+          "participantIdentifier": {
+            "scheme": "iso6523-actorid-upis",
+            "value": "0208:0123456789"
+          },
+          "scope": "sending",
+          "status": "ACTIVE",
+          "statusMessage": "Capability activated on 2026-09-01T02:14:51.660Z \u2014 peppol registration completed",
+          "startDate": "2026-09-01",
+          "activatedAt": "2026-09-01T02:14:51.660Z"
+        }
+      ]
+    },
+    {
+      "ulid": "01KJB3T8W2XKA5RM6D1YQ4ZC7F",
+      "countryCode": "NL",
+      "contractType": "THIRD_PARTY_CONTRACT_BASED",
+      "creationTimestamp": "2026-08-15T09:12:44.318Z",
+      "startDate": "2026-09-01",
+      "identifier": {
+        "kvk": "12345678"
+      },
+      "peppolEntities": [
+        {
+          "participantIdentifier": {
+            "scheme": "iso6523-actorid-upis",
+            "value": "0106:12345678"
+          },
+          "sendingCapabilities": true,
+          "receivingCapabilities": true
+        }
+      ],
+      "status": "REVIEWED",
+      "lastModifiedTimestamp": "2026-08-15T09:12:44.318Z",
+      "statusMessage": "Mandate reviewed on 2026-08-15T09:12:44.318Z",
+      "kycData": {
+        "company": {
+          "name": "Voorbeeld Bedrijf B.V.",
+          "address": {
+            "streetName": "Keizersgracht 210",
+            "additionalStreetName": "Tweede verdieping",
+            "cityName": "Amsterdam",
+            "postalZone": "1016 DX",
+            "countrySubentity": "Noord-Holland",
+            "countryCode": "NL"
+          },
+          "contactEmail": "facturatie@voorbeeld-bedrijf.nl"
+        },
+        "representative": {
+          "personalInformation": {
+            "firstName": "Daan",
+            "lastName": "Jansen"
+          },
+          "dateOfBirth": "1980-02-17",
+          "email": "daan.jansen@voorbeeld-bedrijf.nl",
+          "role": "Directeur"
+        },
+        "participantAgreement": {
+          "date": "2026-08-15",
+          "version": "1.0",
+          "paid": true,
+          "signer": {
+            "firstName": "Daan",
+            "lastName": "Jansen"
+          }
+        },
+        "additionalDocuments": [
+          "01KJAHTSTJNZ1M7F6KW2Y2X4ZQ/01KJB3T8W2XKA5RM6D1YQ4ZC7F/additional-documents/01KJB0Z2W8H4Q1JN6R5T3Y7B9C"
+        ]
+      },
+      "kycDataHistory": [
+        {
+          "kycData": {
+            "company": {
+              "name": "Voorbeeld Bedrijf B.V.",
+              "address": {
+                "streetName": "Keizersgracht 210",
+                "additionalStreetName": "Tweede verdieping",
+                "cityName": "Amsterdam",
+                "postalZone": "1016 DX",
+                "countrySubentity": "Noord-Holland",
+                "countryCode": "NL"
+              },
+              "contactEmail": "facturatie@voorbeeld-bedrijf.nl"
+            },
+            "representative": {
+              "personalInformation": {
+                "firstName": "Daan",
+                "lastName": "Jansen"
+              },
+              "dateOfBirth": "1980-02-17",
+              "email": "daan.jansen@voorbeeld-bedrijf.nl",
+              "role": "Directeur"
+            },
+            "participantAgreement": {
+              "date": "2026-08-15",
+              "version": "1.0",
+              "paid": true,
+              "signer": {
+                "firstName": "Daan",
+                "lastName": "Jansen"
+              }
+            },
+            "additionalDocuments": [
+              "01KJAHTSTJNZ1M7F6KW2Y2X4ZQ/01KJB3T8W2XKA5RM6D1YQ4ZC7F/additional-documents/01KJB0Z2W8H4Q1JN6R5T3Y7B9C"
+            ]
+          },
+          "submittedBy": "integratie@voorbeeld-bedrijf.nl",
+          "submittedAt": "2026-08-15T09:12:44.318Z"
+        }
+      ],
+      "capabilities": [
+        {
+          "ulid": "01KJB1A7R3M9X2Q8V4N6T5W0YD",
+          "participantIdentifier": {
+            "scheme": "iso6523-actorid-upis",
+            "value": "0106:12345678"
+          },
+          "scope": "receiving",
+          "status": "ACTIVE",
+          "statusMessage": "Capability activated on 2026-09-01T02:14:51.660Z \u2014 peppol registration completed",
+          "startDate": "2026-09-01",
+          "activatedAt": "2026-09-01T02:14:51.660Z"
+        },
+        {
+          "ulid": "01KJB1A7R3M9X2Q8V4N6T5W0YE",
+          "participantIdentifier": {
+            "scheme": "iso6523-actorid-upis",
+            "value": "0106:12345678"
+          },
+          "scope": "sending",
+          "status": "ACTIVE",
+          "statusMessage": "Capability activated on 2026-09-01T02:14:51.660Z \u2014 peppol registration completed",
+          "startDate": "2026-09-01",
+          "activatedAt": "2026-09-01T02:14:51.660Z"
+        }
+      ]
+    },
+    {
+      "ulid": "01KJAHTSTJNZ1M7F6KW2Y2X4ZQ",
+      "countryCode": "FR",
+      "contractType": "THIRD_PARTY_CONTRACT_BASED",
+      "creationTimestamp": "2026-08-15T09:12:44.318Z",
+      "startDate": "2026-09-01",
+      "endDate": "2028-12-31",
+      "identifier": {
+        "siren": "123456789",
+        "siret": "12345678900014"
+      },
+      "peppolEntities": [
+        {
+          "participantIdentifier": {
+            "scheme": "iso6523-actorid-upis",
+            "value": "0225:123456789_12345678900014"
+          },
+          "sendingCapabilities": true,
+          "receivingCapabilities": true
+        }
+      ],
+      "status": "REVIEWED",
+      "lastModifiedTimestamp": "2026-08-15T09:12:44.318Z",
+      "statusMessage": "Mandate reviewed on 2026-08-15T09:12:44.318Z",
+      "kycData": {
+        "company": {
+          "name": "Soci\u00e9t\u00e9 Exemple SAS",
+          "address": {
+            "streetName": "12 rue de la Paix",
+            "additionalStreetName": "B\u00e2timent C",
+            "cityName": "Paris",
+            "postalZone": "75002",
+            "countrySubentity": "\u00cele-de-France",
+            "countryCode": "FR"
+          },
+          "contactEmail": "facturation@societe-exemple.fr"
+        },
+        "representative": {
+          "personalInformation": {
+            "firstName": "Camille",
+            "lastName": "Martin"
+          },
+          "dateOfBirth": "1978-04-23",
+          "email": "camille.martin@societe-exemple.fr",
+          "role": "Pr\u00e9sident"
+        },
+        "participantAgreement": {
+          "date": "2026-08-15",
+          "version": "1.0",
+          "paid": true,
+          "signer": {
+            "firstName": "Camille",
+            "lastName": "Martin"
+          }
+        },
+        "additionalDocuments": [
+          "01KJAHTSTJNZ1M7F6KW2Y2X4ZQ/01KJAHTSTJNZ1M7F6KW2Y2X4ZQ/additional-documents/01KJB0Z2W8H4Q1JN6R5T3Y7B9C"
+        ]
+      },
+      "kycDataHistory": [
+        {
+          "kycData": {
+            "company": {
+              "name": "Soci\u00e9t\u00e9 Exemple SAS",
+              "address": {
+                "streetName": "12 rue de la Paix",
+                "additionalStreetName": "B\u00e2timent C",
+                "cityName": "Paris",
+                "postalZone": "75002",
+                "countrySubentity": "\u00cele-de-France",
+                "countryCode": "FR"
+              },
+              "contactEmail": "facturation@societe-exemple.fr"
+            },
+            "representative": {
+              "personalInformation": {
+                "firstName": "Camille",
+                "lastName": "Martin"
+              },
+              "dateOfBirth": "1978-04-23",
+              "email": "camille.martin@societe-exemple.fr",
+              "role": "Pr\u00e9sident"
+            },
+            "participantAgreement": {
+              "date": "2026-08-15",
+              "version": "1.0",
+              "paid": true,
+              "signer": {
+                "firstName": "Camille",
+                "lastName": "Martin"
+              }
+            },
+            "additionalDocuments": [
+              "01KJAHTSTJNZ1M7F6KW2Y2X4ZQ/01KJAHTSTJNZ1M7F6KW2Y2X4ZQ/additional-documents/01KJB0Z2W8H4Q1JN6R5T3Y7B9C"
+            ]
+          },
+          "submittedBy": "integration@societe-exemple.fr",
+          "submittedAt": "2026-08-15T09:12:44.318Z"
+        }
+      ],
+      "capabilities": [
+        {
+          "ulid": "01KJB1A7R3M9X2Q8V4N6T5W0YD",
+          "participantIdentifier": {
+            "scheme": "iso6523-actorid-upis",
+            "value": "0225:123456789_12345678900014"
+          },
+          "scope": "receiving",
+          "status": "ACTIVE",
+          "statusMessage": "Capability activated on 2026-09-01T02:14:51.660Z \u2014 peppol registration completed",
+          "startDate": "2026-09-01",
+          "endDate": "2028-12-31",
+          "activatedAt": "2026-09-01T02:14:51.660Z"
+        },
+        {
+          "ulid": "01KJB1A7R3M9X2Q8V4N6T5W0YE",
+          "participantIdentifier": {
+            "scheme": "iso6523-actorid-upis",
+            "value": "0225:123456789_12345678900014"
+          },
+          "scope": "sending",
+          "status": "ACTIVE",
+          "statusMessage": "Capability activated on 2026-09-01T02:14:51.660Z \u2014 peppol registration completed",
+          "startDate": "2026-09-01",
+          "endDate": "2028-12-31",
+          "activatedAt": "2026-09-01T02:14:51.660Z"
+        }
+      ]
+    },
+    {
+      "ulid": "01KJB4V0Y6ZNC7SP8F2AR5XD9G",
+      "countryCode": "DE",
+      "contractType": "THIRD_PARTY_CONTRACT_BASED",
+      "creationTimestamp": "2026-08-15T09:12:44.318Z",
+      "startDate": "2026-09-01",
+      "identifier": {
+        "geba": "DE123456789"
+      },
+      "peppolEntities": [
+        {
+          "participantIdentifier": {
+            "scheme": "iso6523-actorid-upis",
+            "value": "0246:DE123456789"
+          },
+          "sendingCapabilities": true,
+          "receivingCapabilities": true
+        }
+      ],
+      "status": "REVIEWED",
+      "lastModifiedTimestamp": "2026-08-15T09:12:44.318Z",
+      "statusMessage": "Mandate reviewed on 2026-08-15T09:12:44.318Z",
+      "kycData": {
+        "company": {
+          "name": "Beispiel GmbH",
+          "address": {
+            "streetName": "Friedrichstra\u00dfe 45",
+            "additionalStreetName": "Aufgang B",
+            "cityName": "Berlin",
+            "postalZone": "10117",
+            "countrySubentity": "Berlin",
+            "countryCode": "DE"
+          },
+          "contactEmail": "rechnung@beispiel-gmbh.de"
+        },
+        "representative": {
+          "personalInformation": {
+            "firstName": "Lena",
+            "lastName": "Schmidt"
+          },
+          "dateOfBirth": "1975-09-30",
+          "email": "lena.schmidt@beispiel-gmbh.de",
+          "role": "Gesch\u00e4ftsf\u00fchrerin"
+        },
+        "participantAgreement": {
+          "date": "2026-08-15",
+          "version": "1.0",
+          "paid": true,
+          "signer": {
+            "firstName": "Lena",
+            "lastName": "Schmidt"
+          }
+        },
+        "additionalDocuments": [
+          "01KJAHTSTJNZ1M7F6KW2Y2X4ZQ/01KJB4V0Y6ZNC7SP8F2AR5XD9G/additional-documents/01KJB0Z2W8H4Q1JN6R5T3Y7B9C"
+        ]
+      },
+      "kycDataHistory": [
+        {
+          "kycData": {
+            "company": {
+              "name": "Beispiel GmbH",
+              "address": {
+                "streetName": "Friedrichstra\u00dfe 45",
+                "additionalStreetName": "Aufgang B",
+                "cityName": "Berlin",
+                "postalZone": "10117",
+                "countrySubentity": "Berlin",
+                "countryCode": "DE"
+              },
+              "contactEmail": "rechnung@beispiel-gmbh.de"
+            },
+            "representative": {
+              "personalInformation": {
+                "firstName": "Lena",
+                "lastName": "Schmidt"
+              },
+              "dateOfBirth": "1975-09-30",
+              "email": "lena.schmidt@beispiel-gmbh.de",
+              "role": "Gesch\u00e4ftsf\u00fchrerin"
+            },
+            "participantAgreement": {
+              "date": "2026-08-15",
+              "version": "1.0",
+              "paid": true,
+              "signer": {
+                "firstName": "Lena",
+                "lastName": "Schmidt"
+              }
+            },
+            "additionalDocuments": [
+              "01KJAHTSTJNZ1M7F6KW2Y2X4ZQ/01KJB4V0Y6ZNC7SP8F2AR5XD9G/additional-documents/01KJB0Z2W8H4Q1JN6R5T3Y7B9C"
+            ]
+          },
+          "submittedBy": "integration@beispiel-gmbh.de",
+          "submittedAt": "2026-08-15T09:12:44.318Z"
+        }
+      ],
+      "capabilities": [
+        {
+          "ulid": "01KJB1A7R3M9X2Q8V4N6T5W0YD",
+          "participantIdentifier": {
+            "scheme": "iso6523-actorid-upis",
+            "value": "0246:DE123456789"
+          },
+          "scope": "receiving",
+          "status": "ACTIVE",
+          "statusMessage": "Capability activated on 2026-09-01T02:14:51.660Z \u2014 peppol registration completed",
+          "startDate": "2026-09-01",
+          "activatedAt": "2026-09-01T02:14:51.660Z"
+        },
+        {
+          "ulid": "01KJB1A7R3M9X2Q8V4N6T5W0YE",
+          "participantIdentifier": {
+            "scheme": "iso6523-actorid-upis",
+            "value": "0246:DE123456789"
+          },
+          "scope": "sending",
+          "status": "ACTIVE",
+          "statusMessage": "Capability activated on 2026-09-01T02:14:51.660Z \u2014 peppol registration completed",
+          "startDate": "2026-09-01",
+          "activatedAt": "2026-09-01T02:14:51.660Z"
+        }
+      ]
+    },
+    {
+      "ulid": "01KJB5W2Z8AQD9TR0G3BS6YE1H",
+      "countryCode": "LU",
+      "contractType": "THIRD_PARTY_CONTRACT_BASED",
+      "creationTimestamp": "2026-08-15T09:12:44.318Z",
+      "startDate": "2026-09-01",
+      "identifier": {
+        "mat": "20241234567"
+      },
+      "peppolEntities": [
+        {
+          "participantIdentifier": {
+            "scheme": "iso6523-actorid-upis",
+            "value": "0240:20241234567"
+          },
+          "sendingCapabilities": true,
+          "receivingCapabilities": true
+        }
+      ],
+      "status": "REVIEWED",
+      "lastModifiedTimestamp": "2026-08-15T09:12:44.318Z",
+      "statusMessage": "Mandate reviewed on 2026-08-15T09:12:44.318Z",
+      "kycData": {
+        "company": {
+          "name": "Exemple Luxembourg S.\u00e0 r.l.",
+          "address": {
+            "streetName": "23 Boulevard Royal",
+            "additionalStreetName": "\u00c9tage 4",
+            "cityName": "Luxembourg",
+            "postalZone": "L-2449",
+            "countrySubentity": "Luxembourg",
+            "countryCode": "LU"
+          },
+          "contactEmail": "facturation@exemple-luxembourg.lu"
+        },
+        "representative": {
+          "personalInformation": {
+            "firstName": "Marc",
+            "lastName": "Weber"
+          },
+          "dateOfBirth": "1984-06-11",
+          "email": "marc.weber@exemple-luxembourg.lu",
+          "role": "G\u00e9rant"
+        },
+        "participantAgreement": {
+          "date": "2026-08-15",
+          "version": "1.0",
+          "paid": true,
+          "signer": {
+            "firstName": "Marc",
+            "lastName": "Weber"
+          }
+        },
+        "additionalDocuments": [
+          "01KJAHTSTJNZ1M7F6KW2Y2X4ZQ/01KJB5W2Z8AQD9TR0G3BS6YE1H/additional-documents/01KJB0Z2W8H4Q1JN6R5T3Y7B9C"
+        ]
+      },
+      "kycDataHistory": [
+        {
+          "kycData": {
+            "company": {
+              "name": "Exemple Luxembourg S.\u00e0 r.l.",
+              "address": {
+                "streetName": "23 Boulevard Royal",
+                "additionalStreetName": "\u00c9tage 4",
+                "cityName": "Luxembourg",
+                "postalZone": "L-2449",
+                "countrySubentity": "Luxembourg",
+                "countryCode": "LU"
+              },
+              "contactEmail": "facturation@exemple-luxembourg.lu"
+            },
+            "representative": {
+              "personalInformation": {
+                "firstName": "Marc",
+                "lastName": "Weber"
+              },
+              "dateOfBirth": "1984-06-11",
+              "email": "marc.weber@exemple-luxembourg.lu",
+              "role": "G\u00e9rant"
+            },
+            "participantAgreement": {
+              "date": "2026-08-15",
+              "version": "1.0",
+              "paid": true,
+              "signer": {
+                "firstName": "Marc",
+                "lastName": "Weber"
+              }
+            },
+            "additionalDocuments": [
+              "01KJAHTSTJNZ1M7F6KW2Y2X4ZQ/01KJB5W2Z8AQD9TR0G3BS6YE1H/additional-documents/01KJB0Z2W8H4Q1JN6R5T3Y7B9C"
+            ]
+          },
+          "submittedBy": "integration@exemple-luxembourg.lu",
+          "submittedAt": "2026-08-15T09:12:44.318Z"
+        }
+      ],
+      "capabilities": [
+        {
+          "ulid": "01KJB1A7R3M9X2Q8V4N6T5W0YD",
+          "participantIdentifier": {
+            "scheme": "iso6523-actorid-upis",
+            "value": "0240:20241234567"
+          },
+          "scope": "receiving",
+          "status": "ACTIVE",
+          "statusMessage": "Capability activated on 2026-09-01T02:14:51.660Z \u2014 peppol registration completed",
+          "startDate": "2026-09-01",
+          "activatedAt": "2026-09-01T02:14:51.660Z"
+        },
+        {
+          "ulid": "01KJB1A7R3M9X2Q8V4N6T5W0YE",
+          "participantIdentifier": {
+            "scheme": "iso6523-actorid-upis",
+            "value": "0240:20241234567"
+          },
+          "scope": "sending",
+          "status": "ACTIVE",
+          "statusMessage": "Capability activated on 2026-09-01T02:14:51.660Z \u2014 peppol registration completed",
+          "startDate": "2026-09-01",
+          "activatedAt": "2026-09-01T02:14:51.660Z"
+        }
+      ]
+    }
+  ],
+  "count": 5,
+  "lastEvaluatedKey": "eyJQSyI6IkNMSUVOVCMwMUtKQUhUU1RKTloxTTdGNktXMlkyWDRaUSJ9"
+}

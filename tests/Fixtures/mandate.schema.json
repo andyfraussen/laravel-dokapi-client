@@ -1,0 +1,845 @@
+{
+  "source": "https://mandate-api.dokapi.io/v1/openapi.json",
+  "retrievedAt": "2026-11-12",
+  "sourceSha256": "5ec01353e33baf75f6b9f6e0ab960ccd40a488be4c71e02c8b12cd18106d8895",
+  "components": {
+    "schemas": {
+      "BelgiumParticipantMandateRequestDto": {
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "peppolEntities": {
+            "maxItems": 10,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PeppolEntityDto"
+            }
+          },
+          "identifier": {
+            "$ref": "#/components/schemas/BelgiumMandateIdentifierDto"
+          },
+          "kycData": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BelgiumKycDataDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "startDate",
+          "identifier",
+          "kycData"
+        ]
+      },
+      "PeppolEntityDto": {
+        "type": "object",
+        "properties": {
+          "participantIdentifier": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ParticipantIdentifierDto"
+              }
+            ]
+          },
+          "sendingCapabilities": {
+            "type": "boolean"
+          },
+          "receivingCapabilities": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "participantIdentifier"
+        ]
+      },
+      "ParticipantIdentifierDto": {
+        "type": "object",
+        "properties": {
+          "scheme": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string",
+            "pattern": "^\\d{4}(:[a-zA-Z0-9-._~]{1,130})$"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      },
+      "BelgiumMandateIdentifierDto": {
+        "type": "object",
+        "properties": {
+          "kbo": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "kbo"
+        ]
+      },
+      "BelgiumKycDataDto": {
+        "type": "object",
+        "properties": {
+          "participantAgreement": {
+            "$ref": "#/components/schemas/ParticipantAgreementDto"
+          },
+          "company": {
+            "$ref": "#/components/schemas/KycCompanyDto"
+          },
+          "representative": {
+            "$ref": "#/components/schemas/KycRepresentativeDto"
+          }
+        },
+        "required": [
+          "company"
+        ]
+      },
+      "ParticipantAgreementDto": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "paid": {
+            "type": "boolean"
+          },
+          "signer": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PersonalInformationDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "date",
+          "version",
+          "paid",
+          "signer"
+        ]
+      },
+      "PersonalInformationDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "firstName",
+          "lastName"
+        ]
+      },
+      "KycCompanyDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "address": {
+            "$ref": "#/components/schemas/PostalAddressDto"
+          },
+          "contactEmail": {
+            "type": "string",
+            "format": "email"
+          }
+        },
+        "required": [
+          "name",
+          "address",
+          "contactEmail"
+        ]
+      },
+      "PostalAddressDto": {
+        "type": "object",
+        "properties": {
+          "streetName": {
+            "type": "string"
+          },
+          "additionalStreetName": {
+            "type": "string"
+          },
+          "cityName": {
+            "type": "string"
+          },
+          "postalZone": {
+            "type": "string"
+          },
+          "countrySubentity": {
+            "type": "string"
+          },
+          "countryCode": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "streetName",
+          "cityName",
+          "postalZone",
+          "countrySubentity",
+          "countryCode"
+        ]
+      },
+      "KycRepresentativeDto": {
+        "type": "object",
+        "properties": {
+          "personalInformation": {
+            "$ref": "#/components/schemas/PersonalInformationDto"
+          },
+          "dateOfBirth": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "role": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "personalInformation",
+          "dateOfBirth",
+          "email",
+          "role"
+        ]
+      },
+      "RequestMandateResponseDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "mandate": {
+            "$ref": "#/components/schemas/MandateDto"
+          },
+          "additionalDocumentUpload": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AdditionalDocumentUploadDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "message",
+          "mandate"
+        ]
+      },
+      "MandateDto": {
+        "type": "object",
+        "properties": {
+          "ulid": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING_UPLOAD",
+              "REQUESTED",
+              "REVIEWING",
+              "ACTION_REQUIRED",
+              "REVIEWED",
+              "ACTIVATING",
+              "ACTIVE",
+              "UPDATING",
+              "INACTIVATING",
+              "INACTIVE"
+            ]
+          },
+          "countryCode": {
+            "enum": [
+              "BE",
+              "NL",
+              "FR",
+              "DE",
+              "LU"
+            ],
+            "type": "string"
+          },
+          "contractType": {
+            "enum": [
+              "DOKAPI_CONTRACT_BASED",
+              "THIRD_PARTY_CONTRACT_BASED"
+            ],
+            "type": "string"
+          },
+          "creationTimestamp": {
+            "type": "string"
+          },
+          "lastModifiedTimestamp": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "statusMessage": {
+            "type": "string"
+          },
+          "activatedAt": {
+            "type": "string"
+          },
+          "peppolEntities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PeppolEntityDto"
+            }
+          },
+          "identifier": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BelgiumMandateIdentifierDto"
+              },
+              {
+                "$ref": "#/components/schemas/FranceMandateIdentifierDto"
+              },
+              {
+                "$ref": "#/components/schemas/NetherlandsMandateIdentifierDto"
+              },
+              {
+                "$ref": "#/components/schemas/GermanyMandateIdentifierDto"
+              },
+              {
+                "$ref": "#/components/schemas/LuxembourgMandateIdentifierDto"
+              }
+            ]
+          },
+          "kycData": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BelgiumKycDataResponseDto"
+              },
+              {
+                "$ref": "#/components/schemas/FranceKycDataResponseDto"
+              },
+              {
+                "$ref": "#/components/schemas/NetherlandsKycDataResponseDto"
+              },
+              {
+                "$ref": "#/components/schemas/GermanyKycDataResponseDto"
+              },
+              {
+                "$ref": "#/components/schemas/LuxembourgKycDataResponseDto"
+              }
+            ]
+          },
+          "kycDataHistory": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KycDataHistoryDto"
+            }
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MandateCapabilityDto"
+            }
+          }
+        },
+        "required": [
+          "ulid",
+          "status",
+          "countryCode",
+          "contractType",
+          "creationTimestamp",
+          "lastModifiedTimestamp",
+          "startDate",
+          "identifier",
+          "kycData",
+          "kycDataHistory"
+        ]
+      },
+      "FranceMandateIdentifierDto": {
+        "type": "object",
+        "properties": {
+          "siren": {
+            "type": "string"
+          },
+          "siret": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "siren"
+        ]
+      },
+      "NetherlandsMandateIdentifierDto": {
+        "type": "object",
+        "properties": {
+          "kvk": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "kvk"
+        ]
+      },
+      "GermanyMandateIdentifierDto": {
+        "type": "object",
+        "properties": {
+          "geba": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "geba"
+        ]
+      },
+      "LuxembourgMandateIdentifierDto": {
+        "type": "object",
+        "properties": {
+          "mat": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "mat"
+        ]
+      },
+      "BelgiumKycDataResponseDto": {
+        "type": "object",
+        "properties": {
+          "participantAgreement": {
+            "$ref": "#/components/schemas/ParticipantAgreementDto"
+          },
+          "company": {
+            "$ref": "#/components/schemas/KycCompanyDto"
+          },
+          "representative": {
+            "$ref": "#/components/schemas/KycRepresentativeDto"
+          },
+          "additionalDocuments": {
+            "readOnly": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "company"
+        ]
+      },
+      "FranceKycDataResponseDto": {
+        "type": "object",
+        "properties": {
+          "participantAgreement": {
+            "$ref": "#/components/schemas/ParticipantAgreementDto"
+          },
+          "company": {
+            "$ref": "#/components/schemas/KycCompanyDto"
+          },
+          "representative": {
+            "$ref": "#/components/schemas/KycRepresentativeDto"
+          },
+          "additionalDocuments": {
+            "readOnly": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "company"
+        ]
+      },
+      "NetherlandsKycDataResponseDto": {
+        "type": "object",
+        "properties": {
+          "participantAgreement": {
+            "$ref": "#/components/schemas/ParticipantAgreementDto"
+          },
+          "company": {
+            "$ref": "#/components/schemas/KycCompanyDto"
+          },
+          "representative": {
+            "$ref": "#/components/schemas/KycRepresentativeDto"
+          },
+          "additionalDocuments": {
+            "readOnly": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "company"
+        ]
+      },
+      "GermanyKycDataResponseDto": {
+        "type": "object",
+        "properties": {
+          "participantAgreement": {
+            "$ref": "#/components/schemas/ParticipantAgreementDto"
+          },
+          "company": {
+            "$ref": "#/components/schemas/KycCompanyDto"
+          },
+          "representative": {
+            "$ref": "#/components/schemas/KycRepresentativeDto"
+          },
+          "additionalDocuments": {
+            "readOnly": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "company"
+        ]
+      },
+      "LuxembourgKycDataResponseDto": {
+        "type": "object",
+        "properties": {
+          "participantAgreement": {
+            "$ref": "#/components/schemas/ParticipantAgreementDto"
+          },
+          "company": {
+            "$ref": "#/components/schemas/KycCompanyDto"
+          },
+          "representative": {
+            "$ref": "#/components/schemas/KycRepresentativeDto"
+          },
+          "additionalDocuments": {
+            "readOnly": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "company"
+        ]
+      },
+      "KycDataHistoryDto": {
+        "type": "object",
+        "properties": {
+          "kycData": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BelgiumKycDataResponseDto"
+              },
+              {
+                "$ref": "#/components/schemas/FranceKycDataResponseDto"
+              },
+              {
+                "$ref": "#/components/schemas/NetherlandsKycDataResponseDto"
+              },
+              {
+                "$ref": "#/components/schemas/GermanyKycDataResponseDto"
+              },
+              {
+                "$ref": "#/components/schemas/LuxembourgKycDataResponseDto"
+              }
+            ]
+          },
+          "submittedBy": {
+            "type": "string"
+          },
+          "submittedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "kycData",
+          "submittedBy"
+        ]
+      },
+      "MandateCapabilityDto": {
+        "type": "object",
+        "properties": {
+          "ulid": {
+            "type": "string"
+          },
+          "participantIdentifier": {
+            "$ref": "#/components/schemas/ParticipantIdentifierDto"
+          },
+          "scope": {
+            "enum": [
+              "sending",
+              "receiving",
+              "reporting"
+            ],
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "REQUESTED",
+              "REVIEWING",
+              "ACTION_REQUIRED",
+              "REVIEWED",
+              "ACTIVATING",
+              "ACTIVE",
+              "MIGRATING_OUT",
+              "INACTIVATING",
+              "INACTIVE"
+            ],
+            "type": "string"
+          },
+          "statusMessage": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "activatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "ulid",
+          "participantIdentifier",
+          "scope",
+          "status",
+          "startDate"
+        ]
+      },
+      "AdditionalDocumentUploadDto": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "url"
+          }
+        },
+        "required": [
+          "key",
+          "url"
+        ]
+      },
+      "MandatePageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MandateDto"
+            }
+          },
+          "count": {
+            "type": "number"
+          },
+          "lastEvaluatedKey": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "items",
+          "count"
+        ]
+      },
+      "MandateStatusFeedbackDto": {
+        "type": "object",
+        "properties": {
+          "event": {
+            "enum": [
+              "mandate.requested",
+              "mandate.reviewing",
+              "mandate.action-required",
+              "mandate.reviewed",
+              "mandate.activating",
+              "mandate.active",
+              "mandate.updating",
+              "mandate.inactivating",
+              "mandate.inactive"
+            ],
+            "type": "string"
+          },
+          "ulid": {
+            "type": "string"
+          },
+          "body": {
+            "$ref": "#/components/schemas/MandateStatusInformationDto"
+          }
+        },
+        "required": [
+          "event",
+          "ulid",
+          "body"
+        ]
+      },
+      "MandateStatusInformationDto": {
+        "type": "object",
+        "properties": {
+          "ulid": {
+            "type": "string"
+          },
+          "clientUlid": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING_UPLOAD",
+              "REQUESTED",
+              "REVIEWING",
+              "ACTION_REQUIRED",
+              "REVIEWED",
+              "ACTIVATING",
+              "ACTIVE",
+              "UPDATING",
+              "INACTIVATING",
+              "INACTIVE"
+            ]
+          },
+          "statusMessage": {
+            "type": "string"
+          },
+          "identifier": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/BelgiumMandateIdentifierDto"
+              },
+              {
+                "$ref": "#/components/schemas/FranceMandateIdentifierDto"
+              },
+              {
+                "$ref": "#/components/schemas/NetherlandsMandateIdentifierDto"
+              }
+            ]
+          },
+          "peppolEntities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PeppolEntityDto"
+            }
+          }
+        },
+        "required": [
+          "ulid",
+          "clientUlid",
+          "status",
+          "statusMessage",
+          "identifier"
+        ]
+      },
+      "MandateCapabilityStatusFeedbackDto": {
+        "type": "object",
+        "properties": {
+          "event": {
+            "enum": [
+              "mandate.capability.requested",
+              "mandate.capability.reviewing",
+              "mandate.capability.action-required",
+              "mandate.capability.reviewed",
+              "mandate.capability.activating",
+              "mandate.capability.active",
+              "mandate.capability.migrating-out",
+              "mandate.capability.inactivating",
+              "mandate.capability.inactive"
+            ],
+            "type": "string"
+          },
+          "ulid": {
+            "type": "string"
+          },
+          "body": {
+            "$ref": "#/components/schemas/MandateCapabilityStatusInformationDto"
+          }
+        },
+        "required": [
+          "event",
+          "ulid",
+          "body"
+        ]
+      },
+      "MandateCapabilityStatusInformationDto": {
+        "type": "object",
+        "properties": {
+          "ulid": {
+            "type": "string"
+          },
+          "mandateUlid": {
+            "type": "string"
+          },
+          "clientUlid": {
+            "type": "string"
+          },
+          "participantIdentifier": {
+            "$ref": "#/components/schemas/ParticipantIdentifierDto"
+          },
+          "scope": {
+            "enum": [
+              "sending",
+              "receiving",
+              "reporting"
+            ],
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "REQUESTED",
+              "REVIEWING",
+              "ACTION_REQUIRED",
+              "REVIEWED",
+              "ACTIVATING",
+              "ACTIVE",
+              "MIGRATING_OUT",
+              "INACTIVATING",
+              "INACTIVE"
+            ],
+            "type": "string"
+          },
+          "statusMessage": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "activatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "ulid",
+          "mandateUlid",
+          "clientUlid",
+          "participantIdentifier",
+          "scope",
+          "status",
+          "statusMessage",
+          "startDate"
+        ]
+      }
+    }
+  }
+}

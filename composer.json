@@ -19,7 +19,8 @@
     "require-dev": {
         "orchestra/testbench": "^10.0|^11.0",
         "phpunit/phpunit": "^10.0|^11.0",
-        "larastan/larastan": "^3.9"
+        "larastan/larastan": "^3.9",
+        "opis/json-schema": "^2.6"
     },
     "autoload": {
         "psr-4": {

@@ -11,6 +11,8 @@ return [
     */
 
     'base_url' => env('DOKAPI_BASE_URL', 'https://peppol-api.dokapi-stg.io/v1'),
+    // Opt in explicitly; the Mandate API may use a different environment.
+    'mandate_base_url' => env('DOKAPI_MANDATE_BASE_URL'),
     'token_url' => env('DOKAPI_TOKEN_URL', 'https://dev-portal.dokapi.io/api/oauth2/token'),
     'client_id' => env('DOKAPI_CLIENT_ID'),
     'client_secret' => env('DOKAPI_CLIENT_SECRET'),

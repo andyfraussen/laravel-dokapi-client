@@ -6,6 +6,51 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-11-12
+
+### Added
+- Client information (`GET /clients`) and mandatory document-type discovery by ICD,
+  including fluent resources, direct client/facade methods and response DTOs. All 22
+  operations in the pinned Peppol API schema now have wrappers.
+- Opt-in Belgian Mandate onboarding through `DOKAPI_MANDATE_BASE_URL`: request, retrieve
+  and list mandates, manage Mandate API webhooks, and upload KYC proof without API headers.
+- Typed KYC data, mandate responses, pagination, history, capabilities and webhook feedback,
+  with enum values for known statuses, scopes and events and string fallbacks for future values.
+- Signature-authenticated mandate feedback parsing for mandate and capability events.
+- Typed complete business cards, including business entities, multilingual names,
+  identifiers and contacts. Existing array payloads remain supported.
+- `DokapiUploadException` exposes the creation response, document ULID and upload URL
+  after a failed outgoing/validation upload, preserving the original exception as its cause.
+- Explicit `forgetAccessToken()` and `refreshAccessToken()` methods.
+- Offline API contract tests using pinned schema fixtures and a development-only JSON
+  Schema validator; regression tests for upload recovery, token invalidation and onboarding.
+- PHP 8.3 / Laravel 12 CI coverage alongside the existing PHP 8.4 and 8.5 jobs.
+
+### Fixed
+- Empty validation metadata serializes as `{}` instead of `[]`.
+- Authenticated API 401 responses evict the affected API's cached OAuth token without
+  automatically replaying the failed request. Permission-related 403 responses retain it.
+- Participant registration and business-card update request builders reject supplying
+  both `businessCardInfo` and `completeBusinessCard`.
+- Webhook signature verification rejects an empty secret.
+
+### Upgrade notes
+- This is a major release because upload exception handling and typed request validation
+  change. Review the following notes before upgrading from 2.x.
+- High-level outgoing/validation send methods now throw `DokapiUploadException` after
+  successful creation followed by upload failure. Catch this exception and inspect
+  `getPrevious()` for the original mapped HTTP or transport error. Creation failures and
+  standalone `uploadDocument()` errors keep their existing exception types.
+- Do not automatically retry a complete send after an upload timeout: retain the created
+  document's identity and reconcile its outcome to avoid duplicate submissions.
+- Supplying both business-card formats to a typed request constructor now raises
+  `InvalidArgumentException`; use `completeBusinessCard`, which Dokapi prefers.
+- Mandate support has no default endpoint. Configure the URL for your subscription and
+  environment explicitly; existing Peppol-only integrations need no new configuration.
+- Development dependencies were refreshed locally to resolve the previous audit findings.
+  This library intentionally does not track `composer.lock`; CI resolves and audits dependencies
+  for each supported framework version.
+
 ## [2.0.0] - 2026-08-09
 ### Removed
 - Support for Laravel 11 and `orchestra/testbench` 9. Laravel 11 security support ended on

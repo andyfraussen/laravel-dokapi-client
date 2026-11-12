@@ -6,6 +6,7 @@ use AndyFraussen\Dokapi\Dto\CreateParticipantRegistrationResponse;
 use AndyFraussen\Dokapi\Dto\ParticipantRegistration;
 use AndyFraussen\Dokapi\Dto\ParticipantRegistrationPage;
 use AndyFraussen\Dokapi\Dto\ProblemDetail;
+use AndyFraussen\Dokapi\Dto\MandatoryDocumentTypeCollection;
 use AndyFraussen\Dokapi\Dto\RegisterDocumentTypeResponse;
 use AndyFraussen\Dokapi\Dto\ServiceGroupAndBusinessCard;
 use AndyFraussen\Dokapi\Dto\TextResponse;
@@ -13,6 +14,16 @@ use AndyFraussen\Dokapi\Requests\PayloadInterface;
 
 class ParticipantsResource extends BaseResource
 {
+    public function mandatoryDocumentTypes(string $icd): array
+    {
+        return $this->client->getMandatoryDocumentTypes($icd);
+    }
+
+    public function mandatoryDocumentTypesDto(string $icd): MandatoryDocumentTypeCollection
+    {
+        return $this->client->getMandatoryDocumentTypesDto($icd);
+    }
+
     public function list(?string $lastEvaluatedKey = null, ?int $limit = null): array
     {
         return $this->client->listParticipantRegistrations($lastEvaluatedKey, $limit);

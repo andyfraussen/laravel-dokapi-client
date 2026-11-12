@@ -1,0 +1,125 @@
+{
+  "ulid": "01KJB2M6R4QP8XCT0V9E5NH7WD",
+  "countryCode": "BE",
+  "contractType": "THIRD_PARTY_CONTRACT_BASED",
+  "creationTimestamp": "2026-08-15T09:12:44.318Z",
+  "startDate": "2026-09-01",
+  "identifier": {
+    "kbo": "0123456789"
+  },
+  "peppolEntities": [
+    {
+      "participantIdentifier": {
+        "scheme": "iso6523-actorid-upis",
+        "value": "0208:0123456789"
+      },
+      "sendingCapabilities": true,
+      "receivingCapabilities": true
+    }
+  ],
+  "status": "REVIEWED",
+  "lastModifiedTimestamp": "2026-08-15T09:12:44.318Z",
+  "statusMessage": "Mandate reviewed on 2026-08-15T09:12:44.318Z",
+  "kycData": {
+    "company": {
+      "name": "Example Company BV",
+      "address": {
+        "streetName": "Main Street 12",
+        "additionalStreetName": "Box 3",
+        "cityName": "Antwerp",
+        "postalZone": "2000",
+        "countrySubentity": "Antwerp",
+        "countryCode": "BE"
+      },
+      "contactEmail": "invoicing@example-company.be"
+    },
+    "representative": {
+      "personalInformation": {
+        "firstName": "Jane",
+        "lastName": "Doe"
+      },
+      "dateOfBirth": "1982-11-05",
+      "email": "jane.doe@example-company.be",
+      "role": "Managing Director"
+    },
+    "participantAgreement": {
+      "date": "2026-08-15",
+      "version": "1.0",
+      "paid": true,
+      "signer": {
+        "firstName": "Jane",
+        "lastName": "Doe"
+      }
+    },
+    "additionalDocuments": [
+      "01KJAHTSTJNZ1M7F6KW2Y2X4ZQ/01KJB2M6R4QP8XCT0V9E5NH7WD/additional-documents/01KJB0Z2W8H4Q1JN6R5T3Y7B9C"
+    ]
+  },
+  "kycDataHistory": [
+    {
+      "kycData": {
+        "company": {
+          "name": "Example Company BV",
+          "address": {
+            "streetName": "Main Street 12",
+            "additionalStreetName": "Box 3",
+            "cityName": "Antwerp",
+            "postalZone": "2000",
+            "countrySubentity": "Antwerp",
+            "countryCode": "BE"
+          },
+          "contactEmail": "invoicing@example-company.be"
+        },
+        "representative": {
+          "personalInformation": {
+            "firstName": "Jane",
+            "lastName": "Doe"
+          },
+          "dateOfBirth": "1982-11-05",
+          "email": "jane.doe@example-company.be",
+          "role": "Managing Director"
+        },
+        "participantAgreement": {
+          "date": "2026-08-15",
+          "version": "1.0",
+          "paid": true,
+          "signer": {
+            "firstName": "Jane",
+            "lastName": "Doe"
+          }
+        },
+        "additionalDocuments": [
+          "01KJAHTSTJNZ1M7F6KW2Y2X4ZQ/01KJB2M6R4QP8XCT0V9E5NH7WD/additional-documents/01KJB0Z2W8H4Q1JN6R5T3Y7B9C"
+        ]
+      },
+      "submittedBy": "integration@example-company.be",
+      "submittedAt": "2026-08-15T09:12:44.318Z"
+    }
+  ],
+  "capabilities": [
+    {
+      "ulid": "01KJB1A7R3M9X2Q8V4N6T5W0YD",
+      "participantIdentifier": {
+        "scheme": "iso6523-actorid-upis",
+        "value": "0208:0123456789"
+      },
+      "scope": "receiving",
+      "status": "ACTIVE",
+      "statusMessage": "Capability activated on 2026-09-01T02:14:51.660Z \u2014 peppol registration completed",
+      "startDate": "2026-09-01",
+      "activatedAt": "2026-09-01T02:14:51.660Z"
+    },
+    {
+      "ulid": "01KJB1A7R3M9X2Q8V4N6T5W0YE",
+      "participantIdentifier": {
+        "scheme": "iso6523-actorid-upis",
+        "value": "0208:0123456789"
+      },
+      "scope": "sending",
+      "status": "ACTIVE",
+      "statusMessage": "Capability activated on 2026-09-01T02:14:51.660Z \u2014 peppol registration completed",
+      "startDate": "2026-09-01",
+      "activatedAt": "2026-09-01T02:14:51.660Z"
+    }
+  ]
+}

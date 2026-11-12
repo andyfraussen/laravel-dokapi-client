@@ -1,0 +1,30 @@
+{
+  "startDate": "2026-09-01",
+  "identifier": {
+    "kbo": "0123456789"
+  },
+  "kycData": {
+    "company": {
+      "name": "Example Company BV",
+      "address": {
+        "streetName": "Main Street 12",
+        "additionalStreetName": "Box 3",
+        "cityName": "Antwerp",
+        "postalZone": "2000",
+        "countrySubentity": "Antwerp",
+        "countryCode": "BE"
+      },
+      "contactEmail": "invoicing@example-company.be"
+    }
+  },
+  "peppolEntities": [
+    {
+      "participantIdentifier": {
+        "scheme": "iso6523-actorid-upis",
+        "value": "0208:0123456789"
+      },
+      "sendingCapabilities": true,
+      "receivingCapabilities": true
+    }
+  ]
+}
